@@ -1,0 +1,186 @@
+grid:
+  geom: "slab"
+  nz: 2000 #number of zones
+  nregions: 2
+  L: 2.5e-2
+
+output:
+  dt_print: 5.e-10
+
+numerics:
+  restart: false
+  coeff_CFL: 1.e-4
+  tm_quiet: 9.0e-8
+  maxTime: 1.5e-9
+  smoothing: true
+  dr_smooth: 2.5e-4 #smoothing range
+  eps_visc_max: 5.5e-3
+  eps_compress: 1.0
+  nedges: 1
+  smooth_vars: [1, 0, 1] #density,velocity,temperature
+
+species:
+  nspec: 2
+  species1:
+    Ai: 2.5
+    Zi: 1.0
+    r: [0.0, 1.2e-2, L]
+    den: [1.e26, 1.e20]
+    temp: [100., 1.]
+    vel: [-0.3e6, -0.3e6]
+    smooth_type: "max"
+  species2:
+    Ai: 3.0
+    Zi: 2.0
+    r: [0.0, 1.2e-2, L]
+    den: [1.e20, 1.e25]
+    temp: [100., 1.]
+    vel: [-0.3e6, -0.3e6]
+    smooth_type: "min"
+
+physics:
+  electric_field:
+    efield_switch: true
+    electron_switch: true
+  heat_conduction:
+    heattransfer_switch: true #if false, no thermal equilibration
+    flimit: 0.06
+    electron_heat_conduction: true
+  collisions:
+    friction_switch: true
+    Lab_min: 2.
+    check_frequency: true #check if put a max limit on frequency for friction
+    smax: 5. #max time step for friction (only used when check_frequency==true)
+    ion_viscosity: false
+  radiation:
+    bremsstrahlung: false
+
+
+# Efield_switch = true
+# electron_switch = true   ! if false, electrons are uncoupled to ions (no E-field, no thermalization with electrons)
+#
+# restart = false  !if true, will look at .dat files
+# viscous_species = 4
+# nsubcycle = 1
+
+
+# dt_print = 2.e-12
+#
+# neqi = 3*nspec !total # of equations for the ions
+# dnz = 40
+# Tmax = 500.e3 * qe_C !in Joules
+#
+#
+#
+#
+# call allocate_arrays()
+
+# Tmin = 0.5 * qe_C
+#
+# !C ions (+4)
+# Ai(1) = 12.0
+# Zi(1) = 4.0
+# !H ions
+# Ai(2) = 1.0
+# Zi(2) = 1.0
+# !Ti ions
+# Ai(3) = 47.87
+# Zi(3) = 4.
+# !D ions
+# Ai(4) = 1.
+# Zi(4) = 1.
+#
+# T_ablation = 1.0e3 * qe_C !temperature of expanding gas
+#
+# v_piston = 0.
+# v_shell  = -225.e3
+#
+# n_left = 3.0e23 * 1.e6!m-3 this is the density of CH
+# T_left = 5. * qe_C!J
+#
+# n2n1 = 1.
+# T2T1 = 1.
+# n_shocked = n_left * n2n1
+# T_shocked = T_left * T2T1
+#
+# n_right = 2.4e20 * 1.e6!!m-3 this is the density of D ions
+# T_right = T_left !J
+#
+# eps_n = 1.e-5  !should not be too much lower than 1.e-4
+# nmin = n_right * eps_n
+
+#
+# !-------------------------------
+# !-- parameters for collisions --
+# !-------------------------------
+# do i = 1, nspec
+#     mi_g(i) = Ai(i) * mp_g; !mass of <DT> in grams
+#     mi(i) = 1.e-3 * mi_g(i)
+#     qi(i) = Zi(i) * qe; !charge of species i in statcoulomb
+# enddo
+#
+#
+# !define initial density and temperature
+# !--------------------------------------
+#
+# !C
+# r0(1,:)  = (/ double precision :: 0.0, 310.e-6, 311.e-6, 315.e-6, L /)
+# den0(1,:)   = (/ double precision :: nmin, nmin, 0.5*n_left , 2.5e-4*0.5*n_left /)
+# temp0(1,:)  = (/ double precision :: Tmin, T_left, T_shocked, T_ablation /)
+# vel0(1,:)     = (/ double precision :: 0., v_shell, v_shell, v_shell /)
+#
+# !H
+# r0(2,:)  = (/ double precision :: 0.0, 310.e-6, 311.e-6, 315.e-6, L /)
+# den0(2,:)   = (/ double precision :: nmin, nmin, 0.5*n_left , 2.5e-4*0.5*n_left /)
+# temp0(2,:)  = (/ double precision :: Tmin, T_left, T_shocked, T_ablation /)
+# vel0(2,:)     = (/ double precision :: 0., v_shell, v_shell, v_shell /)
+#
+# !Ti
+# r0(3,:)  = (/ double precision :: 0.0, 310.e-6, 310.25e-6, 315.e-6, L /)
+# den0(3,:)   = (/ double precision :: nmin, 0.018*n_left, 100.*nmin, 100.*nmin /)
+# temp0(3,:)  = (/ double precision :: Tmin, T_left, T_shocked, T_ablation /)
+# vel0(3,:)     = (/ double precision :: 0., v_shell, v_shell, v_shell /)
+#
+# !D
+# r0(4,:)  = (/ double precision :: 0.0, 310.e-6, 311.e-6, 315.e-6, L /)
+# den0(4,:)   = (/ double precision :: n_right, 100.*nmin, 100.*nmin, 100.*nmin/)
+# temp0(4,:)  = (/ double precision :: Tmin, T_left, T_shocked, T_ablation /)
+# vel0(4,:)     = (/ double precision :: 0., v_shell, v_shell, v_shell /)
+#
+# xmax_visc = 180.e-6 !for r > xmax_visc, ion_visc = ion_visc * 1.e-3
+#
+# maxind  = 21200000
+# dt_multi = 1
+# dr = - L / nz !kg/m^2 !note that dr is negative
+#
+#
+# eps_visc_max = 8.e-3!artificial viscosity
+# eps_compress = 1.0
+# if (geom=="slab") then
+#     rmin = 0.
+# else !spherical
+#     rmin = 2.5e-6
+# endif
+#
+# phi = 0.5
+# tm_quiet = 0.
+# nquiet = floor(  50.e-6 / abs(dr) )
+#
+# cs = max( sqrt( g * T_left / minval(mi) ), sqrt( g * T_right / minval(mi) ) )
+#
+# CFL = abs(dr) / cs
+#
+# dtm = coeff_CFL * CFL !may need to be varied to avoid NaN when tm > tm_coll
+#
+# lm = dtm / dr
+#
+# if (ion_viscosity) then
+#     dtm_ = 0.5 * dtm
+#     eps_visc_max = 1./3 * eps_visc_max!artificial viscosity
+# else
+#     dtm_ = dtm
+# endif
+#
+# nsmooth = abs(int(dr_smooth/dr)) !only used if smoothing==true
+# vsmooth = nsmooth  !smoothing for velocity
+# tsmooth = nsmooth  !smoothing for temperature
