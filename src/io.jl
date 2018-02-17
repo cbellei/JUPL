@@ -27,7 +27,8 @@ function open_files()
     			c3 += 1
     			filename = "temp" * string(c3) * ".csv"
     		end
-    		open("output/" * filename, "w+")
+            f = open("output/" * filename, "a")
+    		@eval $(Symbol("f_$i")) = $f
     	end
 end
 
@@ -41,7 +42,6 @@ function write_data()
 	for i = 1:(nspec+1)*3+2
 		if i==1
 			var = r
-            println(r)
             filename = "r.csv"
 		elseif i==(nspec+1)*3+2
 			var = Efield
@@ -63,9 +63,16 @@ function write_data()
 			var = T[:,c3] / qe_C
             filename = "temp" * string(c3) * ".csv"
 		end
+        f = @eval $(Symbol("f_$i"))
 		for k = 1:nz
-			write("output/" * filename, var[k])
+			writedlm(f, [@sprintf("%.5e", var[k])])
 		end
 	end
+end
 
+function close_files()
+    for i = 1:(nspec+1)*3+2
+        f = @eval $(Symbol("f_$i"))
+        close(f)
+    end
 end

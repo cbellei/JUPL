@@ -27,6 +27,3 @@ write_data()
 println("C'est parti!")
 
 close_files()
-
-#TODO: make sure the files are written correctly
-#TODO+ use files id instead of names
