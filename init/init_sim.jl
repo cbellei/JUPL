@@ -1,5 +1,15 @@
 using Constants
 
+time1 = true
+time2 = true
+tm = 0.0
+
+if ion_viscosity
+    dtm_ = 0.5 * dtm
+    eps_visc_max = 1./3 * eps_visc_max #artificial viscosity
+else
+    dtm_ = dtm
+end
 
 function init_spacegrid(dr)
     r = zeros(Float64, nz)
@@ -68,7 +78,12 @@ function init_variables()
 			T[k,j] = T0[k,j]
 		end
     end
+end
 
+function init_predictor_corrector()
+	U1D_p = U1D
+	U1D_c = U1D
+    return U1D_p, U1D_c
 end
 
 

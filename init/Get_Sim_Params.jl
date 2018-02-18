@@ -13,12 +13,14 @@ module Get_Sim_Params
     export nspec, Ai, Zi, r0, den0, temp0, vel0
     export rmin, neqi, eps_visc_max, eps_compress
     export smooth_vars, smooth_type
+    export boundary, phi
 
     key = "grid"
     const geom = data[key]["geom"]
     const nz = data[key]["nz"]
     const nregions = data[key]["nregions"]
     const L = data[key]["L"]
+    const boundary = data[key]["boundary"]
 
     key = "output"
     const dt_print = data[key]["dt_print"]
@@ -34,6 +36,7 @@ module Get_Sim_Params
     const eps_compress = data[key]["eps_compress"]
     const nedges = data[key]["nedges"]
     const smooth_vars = data[key]["smooth_vars"]
+    const phi = data[key]["phi"]
 
     key = "physics"
     subkey = "electric_field"

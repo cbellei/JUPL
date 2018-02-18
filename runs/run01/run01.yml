@@ -3,6 +3,7 @@ grid:
   nz: 2000 #number of zones
   nregions: 2
   L: 2.5e-2
+  boundary: ["reflection", "open"]
 
 output:
   dt_print: 5.e-10
@@ -18,6 +19,7 @@ numerics:
   eps_compress: 1.0
   nedges: 1
   smooth_vars: [1, 0, 1] #density,velocity,temperature
+  phi: 0.5
 
 species:
   nspec: 2

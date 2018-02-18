@@ -19,11 +19,36 @@ do_smoothing()
 init_fluxes()
 
 include("io.jl")
-get_erf_integral()
+erf_table = get_erf_integral()
 write_sim_parameters()
 open_files()
 write_data()
 
-println("C'est parti!")
+include("utils.jl")
+include("boundary.jl")
+include("numerics.jl")
+include("collisions.jl")
+
+nq = 0
+j = 0
+U1D_p, U1D_c = init_predictor_corrector()
+
+while tm <= maxTime
+    j += 1
+    println(j)
+    is_print = is_print_time(tm, dt_print)
+    tm += dtm
+
+    nq, time1, time2 = is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq)
+
+    apply_BC!()
+    #----- predictor -----------
+    #---------------------------
+    predictor!(nq, j)
+    update_variables!(U1D_p)
+    calculate_collisions!(erf_table)
+end
+
+println("---Simulation ended---")
 
 close_files()

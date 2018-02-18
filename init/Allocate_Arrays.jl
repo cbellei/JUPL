@@ -3,7 +3,7 @@ module Allocate_Arrays
 
     export xi, q_FS, q_diff, xi12, nu0, ke, du, vth_e
     export Te, Efield, ne, Qextra, p, u, rho, T
-    export Q_DT, ni, mu_ion, xiab, L_ab, k_DT, U1D, F1D
+    export Q_DT, ni, mu_ion, xiab, L_ab, k_DT, nu_DT, U1D, F1D
     export R1D, U1D_c, U1D_p, G1D, C1D
     export dr_shell, r_shell
     export T0, N0, V0
@@ -27,14 +27,13 @@ module Allocate_Arrays
     T = zeros(Float64, nz, nspec+1)
     Q_DT = zeros(Float64, nz, nspec+1)
 
-
     ni = zeros(Float64, nz, nspec)
     mu_ion = zeros(Float64, nz, nspec)
 
     xiab = zeros(Float64, nz, nspec, nspec)
     L_ab = zeros(Float64, nz, nspec, nspec)
-
     k_DT = zeros(Float64, nz, nspec+1, nspec+1)
+    nu_DT = zeros(Float64, nz, nspec+1, nspec+1)
 
     U1D = zeros(Float64, nz, neqi+1)
     F1D = zeros(Float64, nz, neqi+1)
