@@ -82,3 +82,85 @@ function update_variables!(UU)
 end
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
+function source_terms!(nq)
+
+    q_visc = zeros(Float64, nz)
+    phi_visc = zeros(Float64, nz)
+
+	if heattransfer_switch & electron_switch
+		for i = 1:nspec+1
+			for j = 1:nspec+1
+				if j  != i
+					Q_DT[:,i] = Q_DT[:,i] + k_DT[:,i,j] .* (T[:,j] -  T[:,i])
+				end
+			end
+		end
+		Q_DT[:,nspec+1] = Q_DT[:,nspec+1] + Qextra  #electrons
+	elseif heattransfer_switch & ~electron_switch   #only ions
+		for i = 1:nspec
+			for j = 1:nspec
+				if j != i
+					Q_DT[:,i] = Q_DT[:,i] + k_DT[:,i,j] * ( T[:,j] -  T[:,i])
+				end
+			end
+		end
+	end
+
+	if efield_switch & electron_switch
+		Efield[2:nq-1] = - 0.5 * ( p[3:nq,nspec+1] - p[1:nq-2,nspec+1] ) /
+		                  dr ./ (qe_C * ne[2:nq-1] )
+	else
+		Efield[:] = 0.
+	end
+
+	for i = 1:nspec
+		G1D[:,3*(i-1)+2] = Zi[i] * qe_C * ni[:,i] .* Efield  #source term
+		G1D[:,3*(i-1)+2] = G1D[:,3*(i-1)+2] + R1D[:,3*(i-1)+2]
+		G1D[:,3*(i-1)+3] = Q_DT[:,i] + Zi[i] * qe_C * ni[:,i] .* Efield .* u[:,i]
+		G1D[:,3*(i-1)+3] = G1D[:,3*(i-1)+3] + R1D[:,3*(i-1)+3]
+	end
+
+	if ion_viscosity
+
+		 #find position of r = xmax_visc
+ #		do i = 1, nz
+ #			if (r[i] <= xmax_visc) then  #we found where r~=xmax_visc
+ #				nn = i
+ #				exit
+ #			end
+ #		end
+
+		nn = maxloc(rho[:,1],1)
+
+		for j = viscous_species:viscous_species #nspec
+			G1D[nn+1:nq-2,3*(j-1)+3] = G1D[nn+1:nq-2,3*(j-1)+3] +
+					0.25 * mu_ion[nn+1:nq-2,j] .* (u[nn+2:nq-1,j] - u[nn:nq-3,j]).^2 / dr^2 +
+					mu_ion[nn+1:nq-2,j] .* (u[nn+1:nq-2,j] ./r[nn+1:nq-2]).^2	-
+					0.5 * 2. * mu_ion[nn+1:nq-2,j] .* u[nn+1:nq-2,j] ./
+                        r[nn+2:nq-1] .*(u[nn+2:nq-1,j] - u[nn:nq-3,j]) / dr
+		end
+	end
+
+
+
+	q_diff[2:nq-1] = 1. / dr * ke[2:nq-1] .* (T[3:nq,nspec+1] - T[2:nq-1,nspec+1])
+
+	vth_e = sqrt.(T[:,nspec+1] / me)
+	q_FS[2:nq-1] = rho[3:nq,nspec+1] / me .* T[3:nq,nspec+1] .* vth_e[3:nq]  #ensures that it is forward-differencing later
+	q_diff[:] = sign.(q_diff) .* min.(flimit * q_FS, abs.(q_diff))
+
+	G1D[:,neqi+1] = Q_DT[:,nspec+1] - qe_C * ne .* Efield .* u[:,nspec+1]
+
+	if electron_heat_conduction
+		G1D[2:nq-1,neqi+1] = G1D[2:nq-1,neqi+1] + 1. / dr * (q_diff[2:nq-1] - q_diff[1:nq-2])
+		if geom=="spherical"  #add correction due to spherical geometry
+			G1D[:,neqi+1] = G1D[:,neqi+1] + 2. * q_diff ./ r
+		end
+	end
+
+	 #Lindl, ch. 3 eq. (26) - rho in g/cm3, T in keV
+	if bremsstrahlung
+		G1D[:,neqi+1] = G1D[:,neqi+1] - 3.0e16 * (1.e3 * me * ne)^2 *
+			             (1.e-3 * T[:,nspec+1] / qe_C)
+	end
+end

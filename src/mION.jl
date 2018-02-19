@@ -47,6 +47,8 @@ while tm <= maxTime
     predictor!(nq, j)
     update_variables!(U1D_p)
     calculate_collisions!(erf_table)
+    source_terms!(nq)
+
 end
 
 println("---Simulation ended---")
