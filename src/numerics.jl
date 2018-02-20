@@ -17,7 +17,7 @@ function predictor!(nq, jj)
 	end
 
 	#take care of electrons
-	if mod(jj,2)==1
+	if mod(jj,2) == 1
 		U1D_p[2:nq-1,neqi+1] = U1D[2:nq-1,neqi+1] - lm_ * ( F1D[3:nq,neqi+1] - F1D[2:nq-1,neqi+1] )
 				+ dtm_ * ( phi * G1D[3:nq,neqi+1] + (1-phi) * G1D[2:nq-1,neqi+1] )
 		if geom=="spherical" #add correction for spherical geometry
@@ -32,7 +32,41 @@ function predictor!(nq, jj)
 						*( (1-phi) * F1D[2:nq-1,neqi+1] + phi * F1D[1:nq-2,neqi+1]   )
 		end
 	end
+end
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+function corrector!(nq, jj)
+
+    nq::Int = nq
+	lm_ = dtm_ / dr
+
+	for i = 1:neqi
+		U1D_c[2:nq-1,i] = U1D_p[2:nq-1,i] - lm_ *  (F1D[2:nq-1,i] - F1D[1:nq-2,i]) +
+				dtm_ * ((1-phi) * G1D[2:nq-1,i] + phi * G1D[1:nq-2,i])
+		if geom=="spherical"
+			U1D_c[2:nq-1,i] = U1D_c[2:nq-1,i] - 2. * dtm_ ./ r[2:nq-1]  .*
+						((1-phi) * (F1D[2:nq-1,i] - C1D[2:nq-1,i]) +
+								phi * (F1D[1:nq-2,i] - C1D[1:nq-2,i]))
+		end
+	end
+
+	#take care of electrons
+	if mod(jj,2) == 1
+		U1D_c[2:nq-1,neqi+1] = U1D_p[2:nq-1,neqi+1] - lm_ * (F1D[2:nq-1,neqi+1] - F1D[1:nq-2,neqi+1])  +
+				dtm_ * ((1-phi) * G1D[2:nq-1,neqi+1] + phi * G1D[1:nq-2,neqi+1])
+		if geom=="spherical" #add correction for spherical geometry
+			U1D_c[2:nq-1,neqi+1] = U1D_c[2:nq-1,neqi+1] - 2. * dtm_ ./ r[2:nq-1]  .*
+						((1-phi) * F1D[2:nq-1,neqi+1] + phi * F1D[1:nq-2,neqi+1])
+		end
+	else
+		U1D_c[2:nq-1,neqi+1] = U1D_p[2:nq-1,neqi+1] - lm_ *  (F1D[3:nq,neqi+1] - F1D[2:nq-1,neqi+1]) +
+				dtm_ * (phi * G1D[3:nq,neqi+1] + (1-phi) * G1D[2:nq-1,neqi+1])
+		if geom=="spherical" #add correction for spherical geometry
+			U1D_c[2:nq-1,neqi+1] = U1D_c[2:nq-1,neqi+1] - 2. * dtm_ ./ r[2:nq-1] .*
+						(phi * F1D[3:nq,neqi+1] + (1-phi) * F1D[2:nq-1,neqi+1])
+		end
+	end
 end
 
 #-------------------------------------------------------------------------------
@@ -123,7 +157,7 @@ function source_terms!(nq)
 	if ion_viscosity
 
 		 #find position of r = xmax_visc
- #		do i = 1, nz
+ #		for i = 1, nz
  #			if (r[i] <= xmax_visc) then  #we found where r~=xmax_visc
  #				nn = i
  #				exit

@@ -49,6 +49,22 @@ while tm <= maxTime
     calculate_collisions!(erf_table)
     source_terms!(nq)
 
+    #----- corrector -----------
+    #---------------------------
+    corrector!(nq,j)
+
+    #----- final step ----------
+    U1D[2:nq-1,1:neqi+1] = 0.5 * (U1D[2:nq-1,1:neqi+1] + U1D_c[2:nq-1,1:neqi+1]) +
+            eps_visc[1:nq-2,1:neqi+1] .* (U1D[3:nq,1:neqi+1] - 2 * U1D[2:nq-1,1:neqi+1] + U1D[1:nq-2,1:neqi+1])
+
+    update_variables!(U1D)
+    calculate_collisions!(erf_table)
+    source_terms!(nq)
+
+    if is_print
+        write_data()
+        is_print = false
+    end
 end
 
 println("---Simulation ended---")

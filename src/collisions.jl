@@ -57,7 +57,6 @@ function collision_coefficients(erf_table, drx, mu_ion)
 	end
 	Te_eV = T_eV[:,nspec+1]
 
-
 	for i = 1:nspec
 		for j = 1:nspec
 		    du = abs.(u[:,i] - u[:,j])

@@ -81,8 +81,8 @@ function init_variables()
 end
 
 function init_predictor_corrector()
-	U1D_p = U1D
-	U1D_c = U1D
+	U1D_p = copy(U1D)
+	U1D_c = copy(U1D)
     return U1D_p, U1D_c
 end
 
