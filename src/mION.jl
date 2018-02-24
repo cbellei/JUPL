@@ -3,20 +3,22 @@ push!(LOAD_PATH, "./src")
 
 using Constants
 using Get_Sim_Params
-using Allocate_Arrays
 
 include("../init/process_params.jl")
 const dr, mi_g, mi, qi, nquiet, cs, CFL, dtm,
         lm, nsmooth, vsmooth, tsmooth = process_params()
 
+include("types.jl")
+hydro = hydro_vars(nz, nspec, neqi)
+
 include("../init/init_sim.jl")
 const r = init_spacegrid(dr)
 const eps_visc = init_art_viscosity(geom)
 if !restart
-    init_variables()
+    hydro = init_variables(hydro)
 end
-do_smoothing()
-init_fluxes()
+hydro = do_smoothing(hydro)
+hydro = init_fluxes(hydro)
 
 include("io.jl")
 erf_table = get_erf_integral()
@@ -46,6 +48,8 @@ while tm <= maxTime
     #---------------------------
     predictor!(nq, j)
     update_variables!(U1D_p)
+    println("=================================")
+    println("ne = ", ne)
     calculate_collisions!(erf_table)
     source_terms!(nq)
 

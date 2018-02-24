@@ -56,7 +56,11 @@ function init_art_viscosity(geom)
 end
 
 
-function init_variables()
+function init_variables(hydro)
+
+    T0 = zeros(Float64, nz, nspec)
+    N0 = zeros(Float64, nz, nspec)
+    V0 = zeros(Float64, nz, nspec)
 
 	for j = 1:nspec
 		for m = 1:nregions
@@ -72,12 +76,14 @@ function init_variables()
 
     for k = 1:nz
     	for j = 1:nspec
-			rho[k,j] = N0[k,j] * mi[j]
-			u[k,j] = V0[k,j]
-			p[k,j] = rho[k,j] / mi[j] * T0[k,j]
-			T[k,j] = T0[k,j]
+			hydro.rho[k,j] = N0[k,j] * mi[j]
+			hydro.u[k,j] = V0[k,j]
+			hydro.p[k,j] = hydro.rho[k,j] / mi[j] * T0[k,j]
+			hydro.T[k,j] = T0[k,j]
 		end
     end
+
+    return hydro
 end
 
 function init_predictor_corrector()
@@ -88,7 +94,7 @@ end
 
 
 #----------------------------------------------------
-function do_smoothing()
+function do_smoothing(hydro)
 
 	kgrad = Array{Int32}(2)
     nA, nB, uA, uB, TA, TB = [Array{Float64}(2) for i = 1:6]
@@ -109,18 +115,18 @@ function do_smoothing()
 				maxgrad = 0.
 				mingrad = 1.e20
 				for k = 1:nz-1
-					grad = rho[k,j] / rho[k+1,j]
+					grad = hydro.rho[k,j] / hydro.rho[k+1,j]
 					if grad > maxgrad
 						maxgrad = grad
 						kgrad[1] = k
-						nA[1] = rho[k,j] / mi[j]
-						nB[1] = rho[k+1,j] / mi[j]
+						nA[1] = hydro.rho[k,j] / mi[j]
+						nB[1] = hydro.rho[k+1,j] / mi[j]
 					end
 					if grad < mingrad
 						mingrad = grad
 						kgrad[2] = k
-						nA[2] = rho[k,j] / mi[j]
-						nB[2] = rho[k+1,j] / mi[j]
+						nA[2] = hydro.rho[k,j] / mi[j]
+						nB[2] = hydro.rho[k+1,j] / mi[j]
 					end
 				end
 
@@ -143,7 +149,7 @@ function do_smoothing()
 							b  = ( y1*x2 - y2*x1 ) / ( x2 - x1 )
 							a  = ( y1 - b ) / x1
 
-							rho[k,j] = 10^(a*log10(r[k]) + b) * mi[j]
+							hydro.rho[k,j] = 10^(a*log10(r[k]) + b) * mi[j]
 					end
 				end
 			end
@@ -157,7 +163,7 @@ function do_smoothing()
 			for j = 1:nspec
 				maxgrad = 0.
 				mingrad = 1.e20
-				vel = max(ε, abs(u[:,j]))
+				vel = max(ε, abs(hydro.u[:,j]))
 				for k = 1:nz-1
 					grad = vel[k] / vel[k+1]
 					if grad > maxgrad
@@ -203,7 +209,7 @@ function do_smoothing()
 							b  = ( y1*x2 - y2*x1 ) / ( x2 - x1 )
 							a  = ( y1 - b ) / x1
 
-							u[k,j] = - (  10^( a*log10(r[k]) + b )   )
+							hydro.u[k,j] = - (10^( a*log10(r[k]) + b ))
 					end
 
 				end
@@ -219,12 +225,12 @@ function do_smoothing()
 				maxgrad = 0.
 				mingrad = 1.e20
 				for k = 1:nz-1
-					grad = T[k,j] / T[k+1,j]
+					grad = hydro.T[k,j] / hydro.T[k+1,j]
 					if grad > maxgrad
 						maxgrad = grad
 						kgrad[1] = k
-						TA[1] = T[k,j]
-						TB[1] = T[k+1,j]
+						TA[1] = hydro.T[k,j]
+						TB[1] = hydro.T[k+1,j]
 						if (k+tsmooth < nz) & (k-tsmooth > 0)
 							ok[1] = 1
 						end
@@ -232,8 +238,8 @@ function do_smoothing()
 					if grad < mingrad
 						mingrad = grad
 						kgrad[2] = k
-						TA[2] = T[k,j]
-						TB[2] = T[k+1,j]
+						TA[2] = hydro.T[k,j]
+						TB[2] = hydro.T[k+1,j]
 						if (k+tsmooth < nz) & (k-tsmooth > 0)
 							ok[2] = 1
 						end
@@ -262,7 +268,7 @@ function do_smoothing()
 							b  = ( y1*x2 - y2*x1 ) / ( x2 - x1 )
 							a  = ( y1 - b ) / x1
 
-							T[k,j] = (  10^( a*log10(r[k]) + b )   )
+							hydro.T[k,j] = 10^(a*log10(r[k]) + b)
 					end
 
 				end
@@ -271,58 +277,56 @@ function do_smoothing()
 
 		#now update pressure after all this smoothing...
 		for j = 1:nspec
-			p[:,j] = rho[:,j] / mi[j] .* T[:,j]
+			hydro.p[:,j] = hydro.rho[:,j] / mi[j] .* hydro.T[:,j]
 		end
-
 	end
+    return hydro
 end
 
 
-
-
-
 #-----------------------------------
-function init_fluxes()
+function init_fluxes(hydro)
 
 	println()
 	println(" WARNING - forcing quasi-neutrality and zero-current conditions")
 	println()
 
-	rho[:,nspec+1] = 0.
-	u[:,nspec+1] = 0.
+	hydro.rho[:,nspec+1] = 0.
+	hydro.u[:,nspec+1] = 0.
 
 	#electrons
     for k = 1:nz
     	for j = 1:nspec
-			rho[k,nspec+1] = rho[k,nspec+1] + me * Zi[j] * rho[k,j] / mi[j] #quasi-neutrality
-			u[k,nspec+1] = u[k,nspec+1] + Zi[j] * rho[k,j] * u[k,j] / mi[j]   #zero-current condition
+			hydro.rho[k,nspec+1] = hydro.rho[k,nspec+1] + me * Zi[j] * hydro.rho[k,j] / mi[j] #quasi-neutrality
+			hydro.u[k,nspec+1] = hydro.u[k,nspec+1] + Zi[j] * hydro.rho[k,j] * hydro.u[k,j] / mi[j]   #zero-current condition
     	end
     	if !restart #take species 1 as reference
-			p[k,nspec+1] = rho[k,nspec+1] / me * T[k,1] #electron pressure
-			T[k,nspec+1] = T[k,1] #electron temperature
+			hydro.p[k,nspec+1] = hydro.rho[k,nspec+1] / me * hydro.T[k,1] #electron pressure
+			hydro.T[k,nspec+1] = hydro.T[k,1] #electron temperature
 		else #we have read the electron temperature from file
-			p[k,nspec+1] = rho[k,nspec+1] / me * T[k,nspec+1] #electron pressure
+			hydro.p[k,nspec+1] = hydro.rho[k,nspec+1] / me * hydro.T[k,nspec+1] #electron pressure
 		end
     end
 
 #   correct for electron velocity
-    u[:,nspec+1] = u[:,nspec+1] ./ ( rho[:,nspec+1] / me )
+    hydro.u[:,nspec+1] = hydro.u[:,nspec+1] ./ ( hydro.rho[:,nspec+1] / me )
 #	apply BC at piston side
     for j = 1:nspec+1
-        u[1, j] = 0.
+        hydro.u[1, j] = 0.
     end
 
 #	finally, calculate U1D and F1D for all species
 	for j = 1:nspec
-		U1D[:, 3*(j-1)+1] = rho[:,j]
-		U1D[:, 3*(j-1)+2] = rho[:,j] .* u[:,j]
-		U1D[:, 3*(j-1)+3] = p[:,j] / (g-1) + 0.5 * rho[:,j] .* u[:,j].^2
-		F1D[:, 3*(j-1)+1] = rho[:,j] .* u[:,j]
-		F1D[:, 3*(j-1)+2] = rho[:,j] .* u[:,j].^2 + p[:,j]
-		F1D[:, 3*(j-1)+3] = u[:,j] .* ( g / (g-1) * p[:,j] + 0.5 * rho[:,j] .* u[:,j].^2 )
+		hydro.U1D[:, 3*(j-1)+1] = hydro.rho[:,j]
+		hydro.U1D[:, 3*(j-1)+2] = hydro.rho[:,j] .* hydro.u[:,j]
+		hydro.U1D[:, 3*(j-1)+3] = hydro.p[:,j] / (g-1) + 0.5 * hydro.rho[:,j] .* hydro.u[:,j].^2
+		hydro.F1D[:, 3*(j-1)+1] = hydro.rho[:,j] .* hydro.u[:,j]
+		hydro.F1D[:, 3*(j-1)+2] = hydro.rho[:,j] .* hydro.u[:,j].^2 + hydro.p[:,j]
+		hydro.F1D[:, 3*(j-1)+3] = hydro.u[:,j] .* ( g / (g-1) * hydro.p[:,j] + 0.5 * hydro.rho[:,j] .* hydro.u[:,j].^2 )
 	end
 	#electrons
-	U1D[:,neqi+1] = p[:,nspec+1] ./ (g-1) + 0.5 * rho[:,nspec+1] .* u[:,nspec+1].^2
-	F1D[:,neqi+1] = u[:,nspec+1] .* ( g / (g-1) * p[:,nspec+1] + 0.5 * rho[:,nspec+1] .* u[:,nspec+1].^2 )
+	hydro.U1D[:,neqi+1] = hydro.p[:,nspec+1] ./ (g-1) + 0.5 * hydro.rho[:,nspec+1] .* hydro.u[:,nspec+1].^2
+	hydro.F1D[:,neqi+1] = hydro.u[:,nspec+1] .* ( g / (g-1) * hydro.p[:,nspec+1] + 0.5 * hydro.rho[:,nspec+1] .* hydro.u[:,nspec+1].^2 )
 
+    return hydro
 end

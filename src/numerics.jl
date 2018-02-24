@@ -107,6 +107,9 @@ function update_variables!(UU)
 	p[:,nspec+1] = rho[:,nspec+1] .* T[:,nspec+1] / me
 	F1D[:,neqi+1] = u[:,nspec+1] .* UU[:,neqi+1]  + p[:,nspec+1] .* u[:,nspec+1]
 
+
+    println("ne = ", ne)
+
 	# limit max temperature by Tmax and avoid negative temperatures
 	# for j = 1:nspec+1
 	# 	T[:,j] = min( T[:,j], Tmax  )
