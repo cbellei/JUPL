@@ -1,9 +1,11 @@
 function is_print_time(tm, dt_print)
-  if (mod(tm, dt_print) < dtm)
-      ifprint = true
-      println("--writing files, t = ", tm,
-          "; maxTime = ", maxTime, "; dtm = ", dtm)
+  if mod(tm, dt_print) < dtm
+      is_print = true
+      println("--writing files, t = ", tm, "; maxTime = ", maxTime, "; dtm = ", dtm)
+  else
+      is_print = false
   end
+  return is_print
 end
 
 

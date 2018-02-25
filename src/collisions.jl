@@ -4,23 +4,26 @@ drx = 1.e-4
 
 #-----------------------------------------------------------------------
 #-----------------------------------------------------------------------
-function calculate_collisions!(erf_table)
+function calculate_collisions!(hydro, erf_table)
 
 	#--- calculate collision coefficients ---
 	#----------------------------------------
-	collision_coefficients(erf_table, drx, mu_ion)
+	hydro, xiab, k_DT, ke = collision_coefficients(hydro, erf_table, drx)
 
 	if friction_switch
-		friction()
+		hydro, Qextra = friction(hydro, xiab)
 	end
 
+	return hydro, k_DT, ke, Qextra
 end
 
 #-----------------------------------------------------------------------
 #-----------------------------------------------------------------------
-function collision_coefficients(erf_table, drx, mu_ion)
+function collision_coefficients(hydro, erf_table, drx)
 
 	pi = 2. * asin(1.)
+
+	mu_ion = Array{Float64}(nz, nspec)
 
     xiab = zeros(Float64, nz, nspec, nspec)
     L_ab = zeros(Float64, nz, nspec, nspec)
@@ -48,18 +51,18 @@ function collision_coefficients(erf_table, drx, mu_ion)
 
 	for i = 1:nspec
 		mi_eV[i] = 3.e8^2 * mi[i] / qe_C
-		ni_cc[:,i] = 1.e-3 * rho[:,i] / mi_g[i]  #cm-3
+		ni_cc[:,i] = 1.e-3 * hydro.rho[:,i] / mi_g[i]  #cm-3
 	end
-	ne_cc = 1.e-3 * rho[:,nspec+1] / me_g #cm-3
+	ne_cc = 1.e-3 * hydro.rho[:,nspec+1] / me_g #cm-3
 
 	for i = 1:nspec+1
-	    T_eV[:,i] = max.(T[:,i] / qe_C, 0.) #avoid negative temperature
+	    T_eV[:,i] = max.(hydro.T[:,i] / qe_C, 0.) #avoid negative temperature
 	end
 	Te_eV = T_eV[:,nspec+1]
 
 	for i = 1:nspec
 		for j = 1:nspec
-		    du = abs.(u[:,i] - u[:,j])
+		    du = abs.(hydro.u[:,i] - hydro.u[:,j])
 			muab[i,j] = 1.e-3 / ( mi_g[i] + mi_g[j] ) * mi_g[j] * mi_g[i]  #kg
 			muab_eV[i,j] =  3.e8^2 / 1.6e-19 * muab[i,j]
 			#The following L_ab is the same as the one used in LSP
@@ -83,14 +86,14 @@ function collision_coefficients(erf_table, drx, mu_ion)
 
 	for i = 1:nspec
 		for j = 1:nspec
-		    du = abs.(u[:,i] - u[:,j])
-			Tab = ( mi_g[i] * T[:,j] + mi_g[j] * T[:,i] ) / ( mi_g[i] + mi_g[j] )
+		    du = abs.(hydro.u[:,i] - hydro.u[:,j])
+			Tab = ( mi_g[i] * hydro.T[:,j] + mi_g[j] * hydro.T[:,i] ) / ( mi_g[i] + mi_g[j] )
 			Mab = sqrt.( 0.5 * muab[i,j] ./ Tab  ) .* du
 			i_erf = min.(max.(1, floor.(Int, Mab / drx) + 1), 100000)
 			for k = 1:nz
 				erf[k] = erf_table[i_erf[k]] +
-				(  erf_table[i_erf[k]+1] - erf_table[i_erf[k]] ) / drx *
-                ( Mab[k] - (i_erf[k]-1) * drx  )
+				(erf_table[i_erf[k]+1] - erf_table[i_erf[k]]) / drx *
+                (Mab[k] - (i_erf[k]-1) * drx)
 			end
 			erf = max.(0., min.(erf, 1.0)) #so that's between 0. and 1.
 			Qab = 1. / (32 * pi) * (Zi[i]*Zi[j]*qe_C^2/eps0 ./ Tab).^2 .* L_ab[:,i,j] *
@@ -170,12 +173,14 @@ function collision_coefficients(erf_table, drx, mu_ion)
 		k_DT[:,i,nspec+1] = 1.e6 * 3./2 * ni_cc[:,i] .* nu_DT[:,i,nspec+1]   #SI units
 		k_DT[:,nspec+1,i] = 1.e6 * 3./2 * ne_cc .* nu_DT[:,nspec+1,i]   #SI units
 	end
+
+	return hydro, xiab, k_DT, ke
 end
 
 
 #-----------------------------------------------------------------------
 #-----------------------------------------------------------------------
-function friction()
+function friction(hydro, xiab)
 
 	R1D = zeros(Float64, nz, neqi+1)
 	Qextra = zeros(Float64, nz)
@@ -183,15 +188,16 @@ function friction()
 	for i = 1:nspec
 		for j = 1:nspec
 			if i != j
-				R1D[:,3*(i-1)+2] = R1D[:,3*(i-1)+2]
-                                    - xiab[:,i,j] .* (u[:,i] - u[:,j])
+				R1D[:,3*(i-1)+2] = R1D[:,3*(i-1)+2] -
+                        xiab[:,i,j] .* (hydro.u[:,i] - hydro.u[:,j])
     		end
     	end
-    	R1D[:,3*(i-1)+3] = u[:,i] .* R1D[:,3*(i-1)+2]
+    	R1D[:,3*(i-1)+3] = hydro.u[:,i] .* R1D[:,3*(i-1)+2]
     end
 
  	for i = 1:nspec
 		Qextra = Qextra - R1D[:,3*(i-1)+3]
 	end
 
+	return hydro, Qextra
 end

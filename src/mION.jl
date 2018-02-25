@@ -24,7 +24,7 @@ include("io.jl")
 erf_table = get_erf_integral()
 write_sim_parameters()
 open_files()
-write_data()
+write_data(hydro)
 
 include("utils.jl")
 include("boundary.jl")
@@ -33,7 +33,7 @@ include("collisions.jl")
 
 nq = 0
 j = 0
-U1D_p, U1D_c = init_predictor_corrector()
+init_predictor_corrector(hydro)
 
 while tm <= maxTime
     j += 1
@@ -43,30 +43,29 @@ while tm <= maxTime
 
     nq, time1, time2 = is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq)
 
-    apply_BC!()
+    apply_BC!(hydro)
     #----- predictor -----------
     #---------------------------
-    predictor!(nq, j)
-    update_variables!(U1D_p)
-    println("=================================")
-    println("ne = ", ne)
-    calculate_collisions!(erf_table)
-    source_terms!(nq)
+    predictor!(hydro, nq, j)
+    update_variables!(hydro.U1D_p, hydro)
+    hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
+    source_terms!(hydro, k_DT, ke, Qextra, nq)
 
     #----- corrector -----------
     #---------------------------
-    corrector!(nq,j)
+    corrector!(hydro, nq, j)
 
     #----- final step ----------
-    U1D[2:nq-1,1:neqi+1] = 0.5 * (U1D[2:nq-1,1:neqi+1] + U1D_c[2:nq-1,1:neqi+1]) +
-            eps_visc[1:nq-2,1:neqi+1] .* (U1D[3:nq,1:neqi+1] - 2 * U1D[2:nq-1,1:neqi+1] + U1D[1:nq-2,1:neqi+1])
+    hydro.U1D[2:nq-1,1:neqi+1] = 0.5 * (hydro.U1D[2:nq-1,1:neqi+1] + hydro.U1D_c[2:nq-1,1:neqi+1]) +
+        eps_visc[1:nq-2,1:neqi+1] .*
+        (hydro.U1D[3:nq,1:neqi+1] - 2 * hydro.U1D[2:nq-1,1:neqi+1] + hydro.U1D[1:nq-2,1:neqi+1])
 
-    update_variables!(U1D)
-    calculate_collisions!(erf_table)
-    source_terms!(nq)
+    update_variables!(hydro.U1D, hydro)
+    hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
+    source_terms!(hydro, k_DT, ke, Qextra, nq)
 
     if is_print
-        write_data()
+        write_data(hydro)
         is_print = false
     end
 end

@@ -86,10 +86,10 @@ function init_variables(hydro)
     return hydro
 end
 
-function init_predictor_corrector()
-	U1D_p = copy(U1D)
-	U1D_c = copy(U1D)
-    return U1D_p, U1D_c
+function init_predictor_corrector(hydro)
+	hydro.U1D_p = copy(hydro.U1D)
+	hydro.U1D_c = copy(hydro.U1D)
+    return hydro
 end
 
 

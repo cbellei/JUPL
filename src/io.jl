@@ -33,7 +33,7 @@ function open_files()
 end
 
 
-function write_data()
+function write_data(hydro)
 	c1::Int = 0
 	c2::Int = 0
 	c3::Int = 0
@@ -44,23 +44,23 @@ function write_data()
 			var = r
             filename = "r.csv"
 		elseif i==(nspec+1)*3+2
-			var = Efield
+			var = hydro.Efield
             filename = "efield.csv"
 		elseif (i>1) & (i<=(nspec+1)+1)
 			c1 += 1
-			var = u[:,c1]
+			var = hydro.u[:,c1]
             filename = "vel" * string(c1) * ".csv"
 		elseif (i>(nspec+1)+1) & (i<=2*(nspec+1)+1)
 			c2 += 1
 			if c2<=nspec
-				var = 1.e-6 * rho[:,c2]	/ mi[c2]
+				var = 1.e-6 * hydro.rho[:,c2]	/ mi[c2]
 			else #electrons
-				var = 1.e-6 * rho[:,c2]	/ me
+				var = 1.e-6 * hydro.rho[:,c2]	/ me
 			end
             filename = "den" * string(c2) * ".csv"
 		elseif (i>2*(nspec+1)+1) & (i<=3*(nspec+1)+1)
 			c3 += 1
-			var = T[:,c3] / qe_C
+			var = hydro.T[:,c3] / qe_C
             filename = "temp" * string(c3) * ".csv"
 		end
         f = @eval $(Symbol("f_$i"))
