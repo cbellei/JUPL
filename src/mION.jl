@@ -26,6 +26,9 @@ write_sim_parameters()
 open_files()
 write_data(hydro)
 
+close_files()
+systemerror(0)
+
 include("utils.jl")
 include("boundary.jl")
 include("numerics.jl")
@@ -37,7 +40,7 @@ init_predictor_corrector(hydro)
 
 while tm <= maxTime
     j += 1
-    println(j)
+    println("j = ", j)
     is_print = is_print_time(tm, dt_print)
     tm += dtm
 

@@ -89,6 +89,7 @@ function collision_coefficients(hydro, erf_table, drx)
 		    du = abs.(hydro.u[:,i] - hydro.u[:,j])
 			Tab = ( mi_g[i] * hydro.T[:,j] + mi_g[j] * hydro.T[:,i] ) / ( mi_g[i] + mi_g[j] )
 			Mab = sqrt.( 0.5 * muab[i,j] ./ Tab  ) .* du
+			println(nspec, i, j)
 			i_erf = min.(max.(1, floor.(Int, Mab / drx) + 1), 100000)
 			for k = 1:nz
 				erf[k] = erf_table[i_erf[k]] +

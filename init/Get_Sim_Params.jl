@@ -1,4 +1,5 @@
 module Get_Sim_Params
+    using Constants
     import YAML
 
     path = "./runs/run01/run01.yml"
@@ -76,7 +77,7 @@ module Get_Sim_Params
             end
         end
         den_species = data[key]["species"*string(ispec)]["den"]
-        temp_species = data[key]["species"*string(ispec)]["temp"]
+        temp_species = qe_C * data[key]["species"*string(ispec)]["temp"]
         vel_species = data[key]["species"*string(ispec)]["vel"]
         for ireg = 1:nregions
             den[ispec, ireg] = den_species[ireg]

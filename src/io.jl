@@ -34,6 +34,7 @@ end
 
 
 function write_data(hydro)
+    println("writing!!!!")
 	c1::Int = 0
 	c2::Int = 0
 	c3::Int = 0
