@@ -8,3 +8,8 @@ gks.*
 output/*
 .idea/*
 *.idea
+test/*.csv
+test/mION/*.csv
+test/mION/*.pyc
+test/mION/*.mod
+test/mION/*.dat

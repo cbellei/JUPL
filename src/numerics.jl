@@ -7,12 +7,12 @@ function predictor!(hydro, nq, jj)
 
 	#take care of ions
 	for i = 1:neqi
-		hydro.U1D_p[2:nq-1,i] = hydro.U1D[2:nq-1,i] - lm_ * ( hydro.F1D[3:nq,i] - hydro.F1D[2:nq-1,i] )
-				+ dtm_ * ( phi * hydro.G1D[3:nq,i] + (1-phi) * hydro.G1D[2:nq-1,i] )
+		hydro.U1D_p[2:nq-1,i] = hydro.U1D[2:nq-1,i] - lm_ * (hydro.F1D[3:nq,i] - hydro.F1D[2:nq-1,i])
+				+ dtm_ * (phi * hydro.G1D[3:nq,i] + (1-phi) * hydro.G1D[2:nq-1,i])
 		if (geom=="spherical") #add correction for spherical geometry
 			hydro.U1D_p[2:nq-1,i] = hydro.U1D_p[2:nq-1,i] - 2. * dtm_ / r[2:nq-1]
-						*( phi * ( hydro.F1D[3:nq,i] - hydro.C1D[3:nq,i] ) &
-							+ (1-phi) * ( hydro.F1D[2:nq-1,i] - hydro.C1D[2:nq-1,i] )  )
+						*(phi * ( hydro.F1D[3:nq,i] - hydro.C1D[3:nq,i] ) &
+							+ (1-phi) * ( hydro.F1D[2:nq-1,i] - hydro.C1D[2:nq-1,i]))
 		end
 	end
 
@@ -131,13 +131,13 @@ function source_terms!(hydro, k_DT, ke, Qextra, nq)
 
     Q_DT = zeros(Float64, nz, nspec + 1)
     hydro.G1D[:, :] = 0.0
-    q_diff = Array{Float64}(nz)
-    q_FS = Array{Float64}(nz)
+    q_diff = zeros(Float64, nz)
+    q_FS = zeros(Float64, nz)
 
 	if heattransfer_switch & electron_switch
 		for i = 1:nspec+1
 			for j = 1:nspec+1
-				if j  != i
+				if j != i
 					Q_DT[:,i] = Q_DT[:,i] + k_DT[:,i,j] .* (hydro.T[:,j] - hydro.T[:,i])
 				end
 			end
@@ -147,7 +147,7 @@ function source_terms!(hydro, k_DT, ke, Qextra, nq)
 		for i = 1:nspec
 			for j = 1:nspec
 				if j != i
-					Q_DT[:,i] = Q_DT[:,i] + k_DT[:,i,j] * (hydro.T[:,j] - hydro.T[:,i])
+					Q_DT[:,i] = Q_DT[:,i] + k_DT[:,i,j] .* (hydro.T[:,j] - hydro.T[:,i])
 				end
 			end
 		end
@@ -167,27 +167,6 @@ function source_terms!(hydro, k_DT, ke, Qextra, nq)
 		hydro.G1D[:,3*(i-1)+3] = hydro.G1D[:,3*(i-1)+3] + hydro.R1D[:,3*(i-1)+3]
 	end
 
-	# if ion_viscosity
- #
-	# 	 #find position of r = xmax_visc
- # #		for i = 1, nz
- # #			if (r[i] <= xmax_visc) then  #we found where r~=xmax_visc
- # #				nn = i
- # #				exit
- # #			end
- # #		end
- #
-	# 	nn = maxloc(rho[:,1],1)
- #
-	# 	for j = viscous_species:viscous_species #nspec
-	# 		hydro.G1D[nn+1:nq-2,3*(j-1)+3] = hydro.G1D[nn+1:nq-2,3*(j-1)+3] +
-	# 				0.25 * mu_ion[nn+1:nq-2,j] .* (hydro.u[nn+2:nq-1,j] - hydro.u[nn:nq-3,j]).^2 / dr^2 +
-	# 				mu_ion[nn+1:nq-2,j] .* (hydro.u[nn+1:nq-2,j] ./r[nn+1:nq-2]).^2	-
-	# 				0.5 * 2. * mu_ion[nn+1:nq-2,j] .* hydro.u[nn+1:nq-2,j] ./
- #                        r[nn+2:nq-1] .*(hydro.u[nn+2:nq-1,j] - hydro.u[nn:nq-3,j]) / dr
-	# 	end
-	# end
-
 	q_diff[2:nq-1] = 1. / dr * ke[2:nq-1] .* (hydro.T[3:nq,nspec+1] - hydro.T[2:nq-1,nspec+1])
 
 	vth_e = sqrt.(hydro.T[:,nspec+1] / me)
@@ -203,11 +182,26 @@ function source_terms!(hydro, k_DT, ke, Qextra, nq)
 		end
 	end
 
-	 #Lindl, ch. 3 eq. (26) - rho in g/cm3, T in keV
+	#Lindl, ch. 3 eq. (26) - rho in g/cm3, T in keV
 	if bremsstrahlung
 		hydro.G1D[:,neqi+1] = hydro.G1D[:,neqi+1] - 3.0e16 * (1.e3 * me * hydro.ne).^2 .*
 			             (1.e-3 * hydro.T[:,nspec+1] / qe_C)
 	end
+
+    # j = 945
+    # i = 1
+    # println(hydro.G1D[j,3])
+    # println("k_DT1 = ", k_DT[j,1,2])
+    # println("k_DT2 = ", k_DT[j,1,3])
+    # println("T2 =  ", hydro.T[j,2], " T1 = ", hydro.T[j,1])
+    # println("product1 = ", k_DT[j,1,2] * (hydro.T[j,2] - hydro.T[j,1]))
+    # println("product2 = ", k_DT[j,1,3] * (hydro.T[j,3] - hydro.T[j,1]))
+    # println("Q_DT = ", Q_DT[j,i])
+    # println("ni = ", hydro.ni[j,i])
+    # println("Efield = ", hydro.Efield[j])
+    # println("u = ", hydro.u[j,i])
+    # println("R1D = ", hydro.R1D[j,i])
+    # systemerror(0)
 
     return hydro
 end

@@ -12,7 +12,7 @@ numerics:
   restart: false
   coeff_CFL: 1.e-4
   tm_quiet: 9.0e-8
-  maxTime: 1.5e-9
+  maxTime: 186.0e-9
   smoothing: true
   dr_smooth: 2.5e-4 #smoothing range
   eps_visc_max: 5.5e-3
@@ -55,7 +55,7 @@ physics:
     smax: 5. #max time step for friction (only used when check_frequency==true)
     ion_viscosity: false
   radiation:
-    bremsstrahlung: false
+    bremsstrahlung: true
 
 
 # Efield_switch = true

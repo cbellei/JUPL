@@ -16,7 +16,8 @@ function process_params()
     end
 
     nquiet::Int = floor(1.18e-2 / abs(dr))
-    cs = sqrt(2 * g * maximum(temp0) / mean(mi)) #it's an "average" speed of sound
+    cs = 7985.8074573355016 #sqrt(2 * g * maximum(temp0) / mean(mi)) #it's an "average" speed of sound
+    println("---WARNING!!!! cs needs to be replaced!!!!!!-----")
     CFL = abs(dr) / cs
     dtm = coeff_CFL * CFL #may need to be varied to avoid NaN when tm > tm_coll
     lm = dtm / dr

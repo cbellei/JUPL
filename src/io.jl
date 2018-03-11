@@ -4,7 +4,8 @@ function get_erf_integral()
 end
 
 function write_sim_parameters()
-    writedlm("output/parameters.csv", [@sprintf("%.5e", dtm) @sprintf("%d",nz) @sprintf("%.5e", dt_print) @sprintf("%.5e", tm_quiet) @sprintf("%.5e", L)], ",")
+    filename = "output/parameters.csv"
+    writedlm(filename, [@sprintf("%.5e", dtm) @sprintf("%d",nz) @sprintf("%.5e", dt_print) @sprintf("%.5e", tm_quiet) @sprintf("%.5e", L)], ",")
 end
 
 function open_files()
@@ -34,7 +35,6 @@ end
 
 
 function write_data(hydro)
-    println("writing!!!!")
 	c1::Int = 0
 	c2::Int = 0
 	c3::Int = 0
@@ -76,4 +76,48 @@ function close_files()
         f = @eval $(Symbol("f_$i"))
         close(f)
     end
+end
+
+
+
+
+#---------------------------------------------------------
+function write_all_data(hydro)
+	c1::Int = 0
+	c2::Int = 0
+	c3::Int = 0
+    var = Array{Float64}(nz)
+
+    filename = "./output/U1D.csv"
+    var = hydro.U1D
+    writedlm(filename, var, ",")
+
+    filename = "./output/U1D_p.csv"
+    var = hydro.U1D_p
+    writedlm(filename, var, ",")
+
+    filename = "./output/U1D_c.csv"
+    var = hydro.U1D_c
+    writedlm(filename, var, ",")
+
+    filename = "./output/F1D.csv"
+    var = hydro.F1D
+    writedlm(filename, var, ",")
+
+    filename = "./output/G1D.csv"
+    var = hydro.G1D
+    writedlm(filename, var, ",")
+
+    filename = "./output/R1D.csv"
+    var = hydro.R1D
+    writedlm(filename, var, ",")
+
+    filename = "./output/C1D.csv"
+    var = hydro.C1D
+    writedlm(filename, var, ",")
+
+    filename = "./output/T.csv"
+    var = hydro.T
+    writedlm(filename, var, ",")
+
 end
