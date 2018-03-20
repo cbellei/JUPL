@@ -1,3 +1,9 @@
+test/mION/*.pyc
+test/mION/*.pdf
+test/mION/*.py
+*.csv
+test/mION/*.csv
+test/mION/*.dat
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
