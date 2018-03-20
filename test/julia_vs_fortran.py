@@ -4,7 +4,7 @@ import math
 import csv
 
 
-switch = 2
+switch = 1
 
 prefix1 = "./mION/"
 prefix2 = "../output/"
@@ -20,6 +20,13 @@ elif switch == 1:
 else:
 	files = ["ne_cc.csv", "ni_cc.csv", "L_ab.csv", "L_ie.csv", "xiab.csv",
 			 "taue.csv", "ke.csv", "nu_DT.csv", "k_DT.csv"]
+
+
+def check_data(data1, data2):
+	for i, (d1, d2) in enumerate(zip(data1, data2)):
+		if not math.isclose(d1, d2, rel_tol=1e-5):
+			print(suffix, i, d1, d2)
+			sys.exit(0)
 
 for suffix in files:
 	print("suffix = " + suffix)
@@ -49,11 +56,3 @@ for suffix in files:
 					print("julia")
 					print(row2)
 					sys.exit(0)
-
-
-
-def check_data(data1, data2):
-	for i, (d1, d2) in enumerate(zip(data1, data2)):
-		if not math.isclose(d1, d2, rel_tol=1e-5):
-			print(suffix, i, d1, d2)
-			sys.exit(0)

@@ -54,6 +54,8 @@ while tm <= maxTime
     nq, time1, time2 = is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq)
 
     apply_BC!(hydro)
+    write_all_data(hydro)
+    systemerror(0)
 
     #----- predictor -----------
     #---------------------------
