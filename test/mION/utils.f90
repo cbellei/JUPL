@@ -474,7 +474,7 @@ subroutine collision_coefficients(erf_table, drx)
 	!L_ab = dmax1(1.0, 23.0 - log( Z1*Z2*(m1_g + m2_g) / (m1_g*T2_eV + m2_g*T1_eV) * sqrt( n1_cc*Z1**2/T1_eV + n2_cc*Z2**2/T2_eV )  )); 
 
 	do i = 1, nspec !logLambda for ion-electrons	
-		L_ie(:,i) = max( Lab_min, log( 3/2 * (Te_eV*1.6e-19*1.e7)**1.5 / sqrt(pi * ne_cc) / (Zi(i)*qe**3) ) )   !Krall&Trivelpiece	
+		L_ie(:,i) = max( Lab_min, log(1.5 * (Te_eV*1.6e-19*1.e7)**1.5 / sqrt(pi * ne_cc) / (Zi(i)*qe**3) ) )   !Krall&Trivelpiece
 	enddo
 				
 	do i = 1, nspec

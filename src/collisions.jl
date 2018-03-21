@@ -21,16 +21,14 @@ end
 #-----------------------------------------------------------------------
 function collision_coefficients(hydro, erf_table, drx)
 
-	ε = 1.e-20
-
 	pi = 2. * asin(1.)
 
 	mu_ion = Array{Float64}(nz, nspec)
 
-    xiab = Array{Float64}(nz, nspec, nspec)
-    L_ab = Array{Float64}(nz, nspec, nspec)
-    k_DT = Array{Float64}(nz, nspec+1, nspec+1)
-    nu_DT = Array{Float64}(nz, nspec+1, nspec+1)
+    xiab = zeros(Float64, nz, nspec, nspec)
+    L_ab = zeros(Float64, nz, nspec, nspec)
+    k_DT = zeros(Float64, nz, nspec+1, nspec+1)
+    nu_DT = zeros(Float64, nz, nspec+1, nspec+1)
 
     mi_eV = Array{Float64}(nspec)
     muab = Array{Float64}(nspec, nspec)
@@ -88,9 +86,10 @@ function collision_coefficients(hydro, erf_table, drx)
 
 	for i = 1:nspec
 		for j = 1:nspec
-		    du = max.(abs.(hydro.u[:,i] - hydro.u[:,j]), ε) #here we need to avoid zeros
+		    du = abs.(hydro.u[:,i] - hydro.u[:,j])
 			Tab = ( mi_g[i] * hydro.T[:,j] + mi_g[j] * hydro.T[:,i] ) / ( mi_g[i] + mi_g[j] )
 			Mab = sqrt.( 0.5 * muab[i,j] ./ Tab  ) .* du
+			println(nspec, i, j)
 			i_erf = min.(max.(1, floor.(Int, Mab / drx) + 1), 100000)
 			for k = 1:nz
 				erf[k] = erf_table[i_erf[k]] +
@@ -149,6 +148,7 @@ function collision_coefficients(hydro, erf_table, drx)
 			ni_cc[:,i] .* L_ie[:,i] ./ (me_g * T_eV[:,i] + mi_g[i] * Te_eV).^1.5
 	end
 
+
 	if check_frequency
 		for i = 1:nspec
 			for j = 1:nspec
@@ -199,35 +199,42 @@ function collision_coefficients(hydro, erf_table, drx)
 		writedlm(f, [@sprintf("%s", line)])
 	end
 	close(f)
-	systemerror(0)
 	# writedlm(filename, var, ",")
 
 	filename = "./output/L_ie.csv"
 	var = L_ie
+	f = open(filename, "a")
 	writedlm(filename, var, ",")
+	close(f)
 
 	filename = "./output/xiab.csv"
 	var = xiab
+	f = open(filename, "a")
 	for i=1:nz
 		l1 = xiab[i,1,1]
 		l2 = xiab[i,1,2]
 		l3 = xiab[i,2,1]
 		l4 = xiab[i,2,2]
 		line = "$l1, $l2, $l3, $l4"
-		writedlm(filename, line)
+		writedlm(f, [@sprintf("%s", line)])
 	end
-	# writedlm(filename, var, ",")
+	close(f)
 
 	filename = "./output/taue.csv"
 	var = taue
+	f = open(filename, "a")
 	writedlm(filename, var, ",")
+	close(f)
 
 	filename = "./output/ke.csv"
 	var = ke
+	f = open(filename, "a")
 	writedlm(filename, var, ",")
+	close(f)
 
 	filename = "./output/nu_DT.csv"
 	var = nu_DT
+	f = open(filename, "a")
 	for i=1:nz
 		l1 = var[i,1,1]
 		l2 = var[i,1,2]
@@ -239,11 +246,13 @@ function collision_coefficients(hydro, erf_table, drx)
 		l8 = var[i,3,2]
 		l9 = var[i,3,3]
 		line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
-		writedlm(filename, line)
+		writedlm(f, [@sprintf("%s", line)])
 	end
+	close(f)
 
 	filename = "./output/k_DT.csv"
 	var = k_DT
+	f = open(filename, "a")
 	for i=1:nz
 		l1 = var[i,1,1]
 		l2 = var[i,1,2]
@@ -257,6 +266,7 @@ function collision_coefficients(hydro, erf_table, drx)
 		line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
 		writedlm(filename, line)
 	end
+	close(f)
 
 	return hydro, xiab, k_DT, ke
 end
@@ -266,21 +276,21 @@ end
 #-----------------------------------------------------------------------
 function friction(hydro, xiab)
 
-	hydro.R1D = zeros(Float64, nz, neqi+1)
+	R1D = zeros(Float64, nz, neqi+1)
 	Qextra = zeros(Float64, nz)
 
 	for i = 1:nspec
 		for j = 1:nspec
 			if i != j
-				hydro.R1D[:,3*(i-1)+2] = hydro.R1D[:,3*(i-1)+2] -
+				R1D[:,3*(i-1)+2] = R1D[:,3*(i-1)+2] -
                         xiab[:,i,j] .* (hydro.u[:,i] - hydro.u[:,j])
     		end
     	end
-    	hydro.R1D[:,3*(i-1)+3] = hydro.u[:,i] .* hydro.R1D[:,3*(i-1)+2]
+    	R1D[:,3*(i-1)+3] = hydro.u[:,i] .* R1D[:,3*(i-1)+2]
     end
 
  	for i = 1:nspec
-		Qextra = Qextra - hydro.R1D[:,3*(i-1)+3]
+		Qextra = Qextra - R1D[:,3*(i-1)+3]
 	end
 
 	return hydro, Qextra

@@ -61,9 +61,8 @@ while tm <= maxTime
     #---------------------------
     predictor!(hydro, nq, j)
     update_variables!(hydro.U1D_p, hydro)
-    write_all_data(hydro)
-    systemerror(0)   
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
+    # write_all_data(hydro)
     systemerror(0)
     source_terms!(hydro, k_DT, ke, Qextra, nq)
 

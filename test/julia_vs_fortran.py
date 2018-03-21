@@ -4,7 +4,7 @@ import math
 import csv
 
 
-switch = 1
+switch = 2
 
 prefix1 = "./mION/"
 prefix2 = "../output/"
