@@ -139,15 +139,15 @@ program shock
 		enddo
 
 		call apply_BC()
-		!--------------------------------
-		call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
-		stop
-		!--------------------------------		
 
 		!----- predictor -----------
 		!---------------------------
 		call predictor(nq,j)
 		call update_variables(U1D_p)
+		!--------------------------------
+		call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
+		stop
+		!--------------------------------
 		call calculate_collisions(dxx, erf_table)
 		call source_terms(nq)
 

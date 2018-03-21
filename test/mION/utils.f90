@@ -366,7 +366,7 @@ subroutine update_variables(UU)
 		p(:,i) = rho(:,i) * T(:,i) / mi(i)
 
 		F1D(:,3*(i-1)+1) = rho(:,i) * u(:,i)
-		F1D(:,3*(i-1)+2) = rho(:,i) * u(:,i)**2 + p(2:nz,i)
+		F1D(:,3*(i-1)+2) = rho(:,i) * u(:,i)**2 + p(:,i)
 		F1D(:,3*(i-1)+3) = rho(:,i) * u(:,i) * UU(:,3*(i-1)+3) / rho(:,i) + p(:,i) * u(:,i)
 
 		if (geom=="spherical") then !define correcting matrix
