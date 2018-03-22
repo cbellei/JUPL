@@ -62,10 +62,7 @@ while tm <= maxTime
     predictor!(hydro, nq, j)
     update_variables!(hydro.U1D_p, hydro)
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
-    # write_all_data(hydro)
-    systemerror(0)
     source_terms!(hydro, k_DT, ke, Qextra, nq)
-
     #----- corrector -----------
     #---------------------------
     corrector!(hydro, nq, j)
@@ -76,8 +73,11 @@ while tm <= maxTime
         (hydro.U1D[3:nq,1:neqi+1] - 2 * hydro.U1D[2:nq-1,1:neqi+1] + hydro.U1D[1:nq-2,1:neqi+1])
 
     update_variables!(hydro.U1D, hydro)
-    # hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
-    # source_terms!(hydro, k_DT, ke, Qextra, nq)
+    write_all_data(hydro)
+    systemerror(0)
+    hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
+    source_terms!(hydro, k_DT, ke, Qextra, nq)
+
 
     # -----------------------
     # if j==2

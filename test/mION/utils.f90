@@ -481,7 +481,7 @@ subroutine collision_coefficients(erf_table, drx)
 		do j = 1, nspec
 		    du = abs(  u(:,i) - u(:,j)  )
 			Tab   = ( mi_g(i) * T(:,j) + mi_g(j) * T(:,i) ) / ( mi_g(i) + mi_g(j) )
-			Mab   = sqrt( 0.5 * muab(i,j) / Tab  ) * du
+			Mab   = sqrt( 0.5 * muab(i,j) / Tab  ) * (du + 1.e-20)
 			i_erf = min0( max0(1, floor(Mab / drx)  + 1), 100000) 	
 			do k = 1, nz
 				erf(k) = erf_table(i_erf(k)) + &
@@ -569,49 +569,49 @@ subroutine collision_coefficients(erf_table, drx)
 
 	open(unit=31, file = 'ne_cc.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(E15.6E3)') ne_cc(i)
+		write(31,'(E15.8E3)') ne_cc(i)
 	enddo
 	close(31)
 
 	open(unit=31, file = 'ni_cc.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(E15.6E3, A2, E15.6E3)') ni_cc(i,1), ",", ni_cc(i,2)
+		write(31,'(E15.8E3, A2, E15.8E3)') ni_cc(i,1), ",", ni_cc(i,2)
 	enddo
 	close(31)
 
 	open(unit=31, file = 'L_ab.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(3(E15.6E3,A2) E15.6E3) ') L_ab(i,1,1), ",", L_ab(i,1,2), ",", L_ab(i,2,1), ",", L_ab(i,2,2)
+		write(31,'(3(E15.8E3,A2) E15.8E3) ') L_ab(i,1,1), ",", L_ab(i,1,2), ",", L_ab(i,2,1), ",", L_ab(i,2,2)
 	enddo
 	close(31)
 
 	open(unit=31, file = 'L_ie.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(E15.6E3, A2, E15.6E3)') L_ie(i,1), ",", L_ie(i,2)
+		write(31,'(E15.8E3, A2, E15.8E3)') L_ie(i,1), ",", L_ie(i,2)
 	enddo
 	close(31)
 
 	open(unit=31, file = 'xiab.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(3(E15.6E3,A2) E15.6E3) ') xiab(i,1,1), ",", xiab(i,1,2), ",", xiab(i,2,1), ",", xiab(i,2,2)
+		write(31,'(3(E15.8E3,A2) E15.8E3) ') xiab(i,1,1), ",", xiab(i,1,2), ",", xiab(i,2,1), ",", xiab(i,2,2)
 	enddo
 	close(31)
 
 	open(unit=31, file = 'taue.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(E15.6E3)') taue(i)
+		write(31,'(E15.8E3)') taue(i)
 	enddo
 	close(31)
 
 	open(unit=31, file = 'ke.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(E15.6E3)') ke(i)
+		write(31,'(E15.8E3)') ke(i)
 	enddo
 	close(31)
 
 	open(unit=31, file = 'nu_DT.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(8(E15.6E3,A2) E15.6E3) ') nu_DT(i,1,1), ",", nu_DT(i,1,2), ",", nu_DT(i,1,3), ",",  &
+		write(31,'(8(E15.8E3,A2) E15.8E3) ') nu_DT(i,1,1), ",", nu_DT(i,1,2), ",", nu_DT(i,1,3), ",",  &
 				nu_DT(i,2,1), ",", nu_DT(i,2,2), ",", nu_DT(i,2,3), ",", &
 				nu_DT(i,3,1), ",", nu_DT(i,3,2), ",", nu_DT(i,3,3)
 	enddo
@@ -619,7 +619,7 @@ subroutine collision_coefficients(erf_table, drx)
 
 	open(unit=31, file = 'k_DT.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(8(E15.6E3,A2) E15.6E3) ') k_DT(i,1,1), ",", k_DT(i,1,2), ",", k_DT(i,1,3), ",",  &
+		write(31,'(8(E15.8E3,A2) E15.8E3) ') k_DT(i,1,1), ",", k_DT(i,1,2), ",", k_DT(i,1,3), ",",  &
 				k_DT(i,2,1), ",", k_DT(i,2,2), ",", k_DT(i,2,3), ",", &
 				k_DT(i,3,1), ",", k_DT(i,3,2), ",", k_DT(i,3,3)
 	enddo

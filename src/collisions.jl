@@ -22,6 +22,7 @@ end
 function collision_coefficients(hydro, erf_table, drx)
 
 	pi = 2. * asin(1.)
+	ε = 1.e-20
 
 	mu_ion = Array{Float64}(nz, nspec)
 
@@ -88,8 +89,7 @@ function collision_coefficients(hydro, erf_table, drx)
 		for j = 1:nspec
 		    du = abs.(hydro.u[:,i] - hydro.u[:,j])
 			Tab = ( mi_g[i] * hydro.T[:,j] + mi_g[j] * hydro.T[:,i] ) / ( mi_g[i] + mi_g[j] )
-			Mab = sqrt.( 0.5 * muab[i,j] ./ Tab  ) .* du
-			println(nspec, i, j)
+			Mab = sqrt.( 0.5 * muab[i,j] ./ Tab  ) .* (du + ε)
 			i_erf = min.(max.(1, floor.(Int, Mab / drx) + 1), 100000)
 			for k = 1:nz
 				erf[k] = erf_table[i_erf[k]] +
@@ -264,7 +264,7 @@ function collision_coefficients(hydro, erf_table, drx)
 		l8 = var[i,3,2]
 		l9 = var[i,3,3]
 		line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
-		writedlm(filename, line)
+		writedlm(filename, [@sprintf("%s", line)])
 	end
 	close(f)
 

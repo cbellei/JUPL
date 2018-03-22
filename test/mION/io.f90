@@ -369,7 +369,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'U1D.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.6E3,A2) E15.6E3)') &
+		write(31,'(6(E15.8E3,A2) E15.8E3)') &
                 U1Dv(i,1), ",", U1Dv(i,2), ",", U1Dv(i,3), ",", U1Dv(i,4), ",", U1Dv(i,5), &
                 ",", U1Dv(i,6), ",", U1Dv(i,7)
 	enddo
@@ -377,7 +377,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'U1D_p.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.6E3,A2) E15.6E3)') &
+		write(31,'(6(E15.8E3,A2) E15.8E3)') &
 				U1D_pv(i,1), ",", U1D_pv(i,2), ",", U1D_pv(i,3), ",", U1D_pv(i,4), ",", U1D_pv(i,5), &
 				",", U1D_pv(i,6), ",", U1D_pv(i,7)
 	enddo
@@ -385,7 +385,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'U1D_c.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.6E3,A2) E15.6E3)') &
+		write(31,'(6(E15.8E3,A2) E15.8E3)') &
 				U1D_cv(i,1), ",", U1D_cv(i,2), ",", U1D_cv(i,3), ",", U1D_cv(i,4), ",", U1D_cv(i,5), &
 				",", U1D_cv(i,6), ",", U1D_cv(i,7)
 	enddo
@@ -393,7 +393,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'F1D.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.6E3,A2) E15.6E3)') &
+		write(31,'(6(E15.8E3,A2) E15.8E3)') &
 				F1Dv(i,1), ",", F1Dv(i,2), ",", F1Dv(i,3), ",", F1Dv(i,4), ",", F1Dv(i,5), &
 				",", F1Dv(i,6), ",", F1Dv(i,7)
 	enddo
@@ -401,7 +401,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'G1D.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.6E3,A2) E15.6E3)') &
+		write(31,'(6(E15.8E3,A2) E15.8E3)') &
 				G1Dv(i,1), ",", G1Dv(i,2), ",", G1Dv(i,3), ",", G1Dv(i,4), ",", G1Dv(i,5), &
 				",", G1Dv(i,6), ",", G1Dv(i,7)
 	enddo
@@ -409,7 +409,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'C1D.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.6E3,A2))') &
+		write(31,'(6(E15.8E3,A2))') &
 				C1Dv(i,1), ",", C1Dv(i,2), ",", C1Dv(i,3), ",", C1Dv(i,4), ",", C1Dv(i,5), &
 				",", C1Dv(i,6)
 	enddo
@@ -417,7 +417,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'T.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(2(E15.6E3,A2) E15.6E3)') &
+		write(31,'(2(E15.8E3,A2) E15.8E3)') &
 				T(i,1), ",", T(i,2), ",", T(i,3)
 	enddo
 	close(31)
