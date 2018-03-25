@@ -175,102 +175,102 @@ function collision_coefficients(hydro, erf_table, drx)
 		k_DT[:,nspec+1,i] = 1.e6 * 3./2 * ne_cc .* nu_DT[:,nspec+1,i]   #SI units
 	end
 
-	filename = "./output/ni_cc.csv"
-	var = ni_cc
-	writedlm(filename, var, ",")
-
-	filename = "./output/ne_cc.csv"
-	var = ne_cc
-	writedlm(filename, var, ",")
-
-	filename = "./output/Te_eV.csv"
-	var = Te_eV
-	writedlm(filename, var, ",")
-
-	filename = "./output/T_eV.csv"
-	var = T_eV
-	writedlm(filename, var, ",")
-
-	filename = "./output/L_ab.csv"
-	var = L_ab
-	f = open(filename, "w")
-	for i=1:nz
-		l1 = var[i,1,1]
-		l2 = var[i,1,2]
-		l3 = L_ab[i,2,1]
-		l4 = L_ab[i,2,2]
-		line = "$l1, $l2, $l3, $l4"
-		writedlm(f, [@sprintf("%s", line)])
-	end
-	close(f)
+	# filename = "./output/ni_cc.csv"
+	# var = ni_cc
 	# writedlm(filename, var, ",")
-
-	filename = "./output/L_ie.csv"
-	var = L_ie
-	f = open(filename, "w")
-	writedlm(filename, var, ",")
-	close(f)
-
-	filename = "./output/xiab.csv"
-	var = xiab
-	f = open(filename, "w")
-	for i=1:nz
-		l1 = xiab[i,1,1]
-		l2 = xiab[i,1,2]
-		l3 = xiab[i,2,1]
-		l4 = xiab[i,2,2]
-		line = "$l1, $l2, $l3, $l4"
-		writedlm(f, [@sprintf("%s", line)])
-	end
-	close(f)
-
-	filename = "./output/taue.csv"
-	var = taue
-	f = open(filename, "w")
-	writedlm(filename, var, ",")
-	close(f)
-
-	filename = "./output/ke.csv"
-	var = ke
-	f = open(filename, "w")
-	writedlm(filename, var, ",")
-	close(f)
-
-	filename = "./output/nu_DT.csv"
-	var = nu_DT
-	f = open(filename, "w")
-	for i=1:nz
-		l1 = var[i,1,1]
-		l2 = var[i,1,2]
-		l3 = var[i,1,3]
-		l4 = var[i,2,1]
-		l5 = var[i,2,2]
-		l6 = var[i,2,3]
-		l7 = var[i,3,1]
-		l8 = var[i,3,2]
-		l9 = var[i,3,3]
-		line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
-		writedlm(f, [@sprintf("%s", line)])
-	end
-	close(f)
-
-	filename = "./output/k_DT.csv"
-	var = k_DT
-	f = open(filename, "w")
-	for i=1:nz
-		l1 = var[i,1,1]
-		l2 = var[i,1,2]
-		l3 = var[i,1,3]
-		l4 = var[i,2,1]
-		l5 = var[i,2,2]
-		l6 = var[i,2,3]
-		l7 = var[i,3,1]
-		l8 = var[i,3,2]
-		l9 = var[i,3,3]
-		line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
-		writedlm(filename, [@sprintf("%s", line)])
-	end
-	close(f)
+    #
+	# filename = "./output/ne_cc.csv"
+	# var = ne_cc
+	# writedlm(filename, var, ",")
+    #
+	# filename = "./output/Te_eV.csv"
+	# var = Te_eV
+	# writedlm(filename, var, ",")
+    #
+	# filename = "./output/T_eV.csv"
+	# var = T_eV
+	# writedlm(filename, var, ",")
+    #
+	# filename = "./output/L_ab.csv"
+	# var = L_ab
+	# f = open(filename, "w")
+	# for i=1:nz
+	# 	l1 = var[i,1,1]
+	# 	l2 = var[i,1,2]
+	# 	l3 = L_ab[i,2,1]
+	# 	l4 = L_ab[i,2,2]
+	# 	line = "$l1, $l2, $l3, $l4"
+	# 	writedlm(f, [@sprintf("%s", line)])
+	# end
+	# close(f)
+	# # writedlm(filename, var, ",")
+    #
+	# filename = "./output/L_ie.csv"
+	# var = L_ie
+	# f = open(filename, "w")
+	# writedlm(filename, var, ",")
+	# close(f)
+    #
+	# filename = "./output/xiab.csv"
+	# var = xiab
+	# f = open(filename, "w")
+	# for i=1:nz
+	# 	l1 = xiab[i,1,1]
+	# 	l2 = xiab[i,1,2]
+	# 	l3 = xiab[i,2,1]
+	# 	l4 = xiab[i,2,2]
+	# 	line = "$l1, $l2, $l3, $l4"
+	# 	writedlm(f, [@sprintf("%s", line)])
+	# end
+	# close(f)
+    #
+	# filename = "./output/taue.csv"
+	# var = taue
+	# f = open(filename, "w")
+	# writedlm(filename, var, ",")
+	# close(f)
+    #
+	# filename = "./output/ke.csv"
+	# var = ke
+	# f = open(filename, "w")
+	# writedlm(filename, var, ",")
+	# close(f)
+    #
+	# filename = "./output/nu_DT.csv"
+	# var = nu_DT
+	# f = open(filename, "w")
+	# for i=1:nz
+	# 	l1 = var[i,1,1]
+	# 	l2 = var[i,1,2]
+	# 	l3 = var[i,1,3]
+	# 	l4 = var[i,2,1]
+	# 	l5 = var[i,2,2]
+	# 	l6 = var[i,2,3]
+	# 	l7 = var[i,3,1]
+	# 	l8 = var[i,3,2]
+	# 	l9 = var[i,3,3]
+	# 	line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
+	# 	writedlm(f, [@sprintf("%s", line)])
+	# end
+	# close(f)
+    #
+	# filename = "./output/k_DT.csv"
+	# var = k_DT
+	# f = open(filename, "w")
+	# for i=1:nz
+	# 	l1 = var[i,1,1]
+	# 	l2 = var[i,1,2]
+	# 	l3 = var[i,1,3]
+	# 	l4 = var[i,2,1]
+	# 	l5 = var[i,2,2]
+	# 	l6 = var[i,2,3]
+	# 	l7 = var[i,3,1]
+	# 	l8 = var[i,3,2]
+	# 	l9 = var[i,3,3]
+	# 	line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
+	# 	writedlm(filename, [@sprintf("%s", line)])
+	# end
+	# close(f)
 
 	return hydro, xiab, k_DT, ke
 end

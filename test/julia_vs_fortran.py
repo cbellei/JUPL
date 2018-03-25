@@ -4,16 +4,15 @@ import math
 import csv
 
 
-switch = 1
+switch = 0
 
 prefix1 = "./mION/"
 prefix2 = "../output/"
 
 if switch == 0:
 	files = ["den1.csv", "den2.csv", "den3.csv",
-				 "efield.csv", "r.csv",
-				 "temp1.csv", "temp2.csv", "temp3.csv",
-				 "vel1.csv", "vel2.csv", "vel3.csv"]
+				 "r.csv", "temp1.csv", "temp2.csv", "temp3.csv",
+				 "vel1.csv", "vel2.csv", "vel3.csv", "efield.csv"]
 elif switch == 1:
 	files = ["F1D.csv", "C1D.csv",
 			 "U1D.csv", "U1D_p.csv", "U1D_c.csv",

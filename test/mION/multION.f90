@@ -158,10 +158,10 @@ program shock
 		call update_variables(U1D)
         call calculate_collisions( dxx,erf_table)
         call source_terms(nq)
-        !--------------------------------
-        call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
-        stop
-        !--------------------------------
+!        !--------------------------------
+!        call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
+!        stop
+!        !--------------------------------
 
 
 		if (ion_viscosity) then !second step in splitting operator algorithm

@@ -188,20 +188,5 @@ function source_terms!(hydro, k_DT, ke, Qextra, nq)
 			             (1.e-3 * hydro.T[:,nspec+1] / qe_C)
 	end
 
-    # j = 945
-    # i = 1
-    # println(hydro.G1D[j,3])
-    # println("k_DT1 = ", k_DT[j,1,2])
-    # println("k_DT2 = ", k_DT[j,1,3])
-    # println("T2 =  ", hydro.T[j,2], " T1 = ", hydro.T[j,1])
-    # println("product1 = ", k_DT[j,1,2] * (hydro.T[j,2] - hydro.T[j,1]))
-    # println("product2 = ", k_DT[j,1,3] * (hydro.T[j,3] - hydro.T[j,1]))
-    # println("Q_DT = ", Q_DT[j,i])
-    # println("ni = ", hydro.ni[j,i])
-    # println("Efield = ", hydro.Efield[j])
-    # println("u = ", hydro.u[j,i])
-    # println("R1D = ", hydro.R1D[j,i])
-    # systemerror(0)
-
     return hydro
 end

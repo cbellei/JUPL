@@ -75,8 +75,8 @@ while tm <= maxTime
     update_variables!(hydro.U1D, hydro)
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
     source_terms!(hydro, k_DT, ke, Qextra, nq)
-    write_all_data(hydro)
-    systemerror(0)
+    # write_all_data(hydro)
+    # systemerror(0)
 
     # -----------------------
     # if j==2
@@ -91,6 +91,7 @@ while tm <= maxTime
         close_files()
         is_print = false
     end
+
 end
 
 println("---Simulation ended---")
