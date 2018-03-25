@@ -156,11 +156,11 @@ program shock
 				+ eps_visc(1:nq-2,1:neqi+1) * ( U1D(3:nq,1:neqi+1) - 2*U1D(2:nq-1,1:neqi+1) + U1D(1:nq-2,1:neqi+1)  )
 
 		call update_variables(U1D)
+        call calculate_collisions( dxx,erf_table)
         !--------------------------------
         call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
         stop
         !--------------------------------
-        call calculate_collisions( dxx,erf_table)
         call source_terms(nq)
 
 

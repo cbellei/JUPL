@@ -187,9 +187,13 @@ function collision_coefficients(hydro, erf_table, drx)
 	var = Te_eV
 	writedlm(filename, var, ",")
 
+	filename = "./output/T_eV.csv"
+	var = T_eV
+	writedlm(filename, var, ",")
+
 	filename = "./output/L_ab.csv"
 	var = L_ab
-	f = open(filename, "a")
+	f = open(filename, "w")
 	for i=1:nz
 		l1 = var[i,1,1]
 		l2 = var[i,1,2]
@@ -203,13 +207,13 @@ function collision_coefficients(hydro, erf_table, drx)
 
 	filename = "./output/L_ie.csv"
 	var = L_ie
-	f = open(filename, "a")
+	f = open(filename, "w")
 	writedlm(filename, var, ",")
 	close(f)
 
 	filename = "./output/xiab.csv"
 	var = xiab
-	f = open(filename, "a")
+	f = open(filename, "w")
 	for i=1:nz
 		l1 = xiab[i,1,1]
 		l2 = xiab[i,1,2]
@@ -222,19 +226,19 @@ function collision_coefficients(hydro, erf_table, drx)
 
 	filename = "./output/taue.csv"
 	var = taue
-	f = open(filename, "a")
+	f = open(filename, "w")
 	writedlm(filename, var, ",")
 	close(f)
 
 	filename = "./output/ke.csv"
 	var = ke
-	f = open(filename, "a")
+	f = open(filename, "w")
 	writedlm(filename, var, ",")
 	close(f)
 
 	filename = "./output/nu_DT.csv"
 	var = nu_DT
-	f = open(filename, "a")
+	f = open(filename, "w")
 	for i=1:nz
 		l1 = var[i,1,1]
 		l2 = var[i,1,2]
@@ -252,7 +256,7 @@ function collision_coefficients(hydro, erf_table, drx)
 
 	filename = "./output/k_DT.csv"
 	var = k_DT
-	f = open(filename, "a")
+	f = open(filename, "w")
 	for i=1:nz
 		l1 = var[i,1,1]
 		l2 = var[i,1,2]

@@ -566,7 +566,6 @@ subroutine collision_coefficients(erf_table, drx)
 		k_DT(:,nspec+1,i) = 1.e6 * 3./2 * ne_cc * nu_DT(:,nspec+1,i)   !SI units
 	enddo
 
-
 	open(unit=31, file = 'ne_cc.csv', action = 'write')
 	do i = 1, nz
 		write(31,'(E15.8E3)') ne_cc(i)
@@ -578,6 +577,18 @@ subroutine collision_coefficients(erf_table, drx)
 		write(31,'(E15.8E3, A2, E15.8E3)') ni_cc(i,1), ",", ni_cc(i,2)
 	enddo
 	close(31)
+
+    open(unit=31, file = 'Te_eV.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E15.8E3)') Te_eV(i)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'T_eV.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E15.8E3, A2, E15.8E3, A2, E15.8E3)') T_eV(i,1), ",", T_eV(i,2), ",", T_eV(i,3)
+    enddo
+    close(31)
 
 	open(unit=31, file = 'L_ab.csv', action = 'write')
 	do i = 1, nz

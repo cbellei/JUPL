@@ -19,7 +19,7 @@ elif switch == 1:
 			 "U1D.csv", "U1D_p.csv", "U1D_c.csv",
 			 "T.csv", "G1D.csv"]
 else:
-	files = ["ne_cc.csv", "ni_cc.csv", "L_ab.csv", "L_ie.csv", "xiab.csv",
+	files = ["ne_cc.csv", "ni_cc.csv", "Te_eV.csv", "T_eV.csv", "L_ab.csv", "L_ie.csv", "xiab.csv",
 			 "taue.csv", "ke.csv", "nu_DT.csv", "k_DT.csv"]
 
 
