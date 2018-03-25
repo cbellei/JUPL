@@ -74,10 +74,9 @@ while tm <= maxTime
 
     update_variables!(hydro.U1D, hydro)
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
+    source_terms!(hydro, k_DT, ke, Qextra, nq)
     write_all_data(hydro)
     systemerror(0)
-    source_terms!(hydro, k_DT, ke, Qextra, nq)
-
 
     # -----------------------
     # if j==2
