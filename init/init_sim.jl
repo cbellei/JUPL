@@ -309,7 +309,7 @@ function init_fluxes(hydro)
     end
 
 #   correct for electron velocity
-    hydro.u[:,nspec+1] = hydro.u[:,nspec+1] ./ ( hydro.rho[:,nspec+1] / me )
+    hydro.u[:,nspec+1] = hydro.u[:,nspec+1] ./ (hydro.rho[:,nspec+1] / me)
 #	apply BC at piston side
     for j = 1:nspec+1
         hydro.u[1, j] = 0.

@@ -37,6 +37,7 @@ function collision_coefficients(hydro, erf_table, drx)
     L_ie = Array{Float64}(nz, nspec)
     ni_cc = Array{Float64}(nz, nspec)
     ne_cc = Array{Float64}(nz)
+	ke = Array{Float64}(nz)
     Te_eV = Array{Float64}(nz)
     taue = Array{Float64}(nz)
     taui = Array{Float64}(nz)
@@ -112,6 +113,7 @@ function collision_coefficients(hydro, erf_table, drx)
 			xiab[:,i,j] = max.(0., xiab[:,i,j]) #avoid negative values too
 		end
 	end
+
 
 	for i = 1:nz
 		meanL_ie[i] = sum(L_ie[i,:]) / nspec
@@ -197,18 +199,20 @@ function collision_coefficients(hydro, erf_table, drx)
 	# for i=1:nz
 	# 	l1 = var[i,1,1]
 	# 	l2 = var[i,1,2]
-	# 	l3 = L_ab[i,2,1]
-	# 	l4 = L_ab[i,2,2]
-	# 	line = "$l1, $l2, $l3, $l4"
-	# 	writedlm(f, [@sprintf("%s", line)])
+	# 	l3 = var[i,2,1]
+	# 	l4 = var[i,2,2]
+	# 	writedlm(f, [@sprintf("%.24e %s %.24e %s %.24e %s %.24e", l1, ",", l2, ",", l3, ",", l4)])
 	# end
 	# close(f)
-	# # writedlm(filename, var, ",")
     #
 	# filename = "./output/L_ie.csv"
 	# var = L_ie
 	# f = open(filename, "w")
-	# writedlm(filename, var, ",")
+	# for i=1:nz
+	# 	l1 = var[i,1]
+	# 	l2 = var[i,2]
+	# 	writedlm(f, [@sprintf("%.24e %s %.24e", l1, ",", l2)])
+	# end
 	# close(f)
     #
 	# filename = "./output/xiab.csv"
@@ -219,8 +223,7 @@ function collision_coefficients(hydro, erf_table, drx)
 	# 	l2 = xiab[i,1,2]
 	# 	l3 = xiab[i,2,1]
 	# 	l4 = xiab[i,2,2]
-	# 	line = "$l1, $l2, $l3, $l4"
-	# 	writedlm(f, [@sprintf("%s", line)])
+	# 	writedlm(f, [@sprintf("%.24e %s %.24e %s %.24e %s %.24e", l1, ",", l2, ",", l3, ",", l4)])
 	# end
 	# close(f)
     #
@@ -249,8 +252,8 @@ function collision_coefficients(hydro, erf_table, drx)
 	# 	l7 = var[i,3,1]
 	# 	l8 = var[i,3,2]
 	# 	l9 = var[i,3,3]
-	# 	line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
-	# 	writedlm(f, [@sprintf("%s", line)])
+	# 	writedlm(f, [@sprintf("%.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e",
+	# 					l1, ",", l2, ",", l3, ",", l4, ",", l5, ",", l6, ",", l7, ",", l8, ",", l9)])
 	# end
 	# close(f)
     #
@@ -267,8 +270,8 @@ function collision_coefficients(hydro, erf_table, drx)
 	# 	l7 = var[i,3,1]
 	# 	l8 = var[i,3,2]
 	# 	l9 = var[i,3,3]
-	# 	line = "$l1, $l2, $l3, $l4, $l5, $l6, $l7, $l8, $l9"
-	# 	writedlm(filename, [@sprintf("%s", line)])
+	# 	writedlm(f, [@sprintf("%.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e",
+	# 					l1, ",", l2, ",", l3, ",", l4, ",", l5, ",", l6, ",", l7, ",", l8, ",", l9)])
 	# end
 	# close(f)
 

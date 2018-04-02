@@ -9,7 +9,7 @@ function is_print_time(tm, dt_print)
 end
 
 
-function is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq)
+function is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq, dt_print, dtm)
     if (time1 && tm < tm_quiet)
         if geom=="slab"
             nq = nquiet
@@ -17,6 +17,7 @@ function is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq)
             nq = nz - nquiet
         end
         println("nz = ", nz, " nquiet = ", nquiet, " tm_quiet=", tm_quiet)
+        println("dt_print = ", dt_print, " dtm = ", dtm)
         time1 = false
     elseif (time2 && tm >= tm_quiet)
         println("end of quiet time")

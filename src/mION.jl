@@ -30,6 +30,7 @@ if !restart
 end
 hydro = do_smoothing(hydro)
 hydro = init_fluxes(hydro)
+init_predictor_corrector(hydro)
 
 erf_table = get_erf_integral()
 write_sim_parameters()
@@ -44,25 +45,31 @@ include("collisions.jl")
 
 nq = 0
 j = 0
-init_predictor_corrector(hydro)
-
 while tm <= maxTime
     j += 1
     tm += dtm
     is_print = is_print_time(tm, dt_print)
 
-    nq, time1, time2 = is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq)
+    nq, time1, time2 = is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq, dt_print, dtm)
 
     apply_BC!(hydro)
-    # write_all_data(hydro)
-    # systemerror(0)
-
     #----- predictor -----------
     #---------------------------
     predictor!(hydro, nq, j)
+    # if j==2
+    #     #----start debug
+    #     open_files()
+    #     write_data(hydro)
+    #     close_files()
+    #     write_all_data(hydro)
+    #     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
+    #     systemerror(0)
+    #     #----end debug
+    # end
     update_variables!(hydro.U1D_p, hydro)
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
     source_terms!(hydro, k_DT, ke, Qextra, nq)
+
     #----- corrector -----------
     #---------------------------
     corrector!(hydro, nq, j)
@@ -75,15 +82,6 @@ while tm <= maxTime
     update_variables!(hydro.U1D, hydro)
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
     source_terms!(hydro, k_DT, ke, Qextra, nq)
-    # write_all_data(hydro)
-    # systemerror(0)
-
-    # -----------------------
-    # if j==2
-    #     write_all_data(hydro)
-    #     systemerror(1)
-    # end
-    # -----------------------
 
     if is_print
         open_files()

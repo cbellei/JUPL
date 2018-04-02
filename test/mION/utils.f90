@@ -50,7 +50,7 @@ subroutine predictor(nq,jj)
 		endif
 	enddo
 
-	!take care of electrons
+    !take care of electrons
 	if ( mod(jj,2)==1 ) then 
 		U1D_p(2:nq-1,neqi+1) = U1D(2:nq-1,neqi+1) - lm_ * ( F1D(3:nq,neqi+1) - F1D(2:nq-1,neqi+1) ) &
 				+ dtm_ * ( phi * G1D(3:nq,neqi+1) + (1-phi) * G1D(2:nq-1,neqi+1) )
@@ -287,7 +287,6 @@ subroutine source_terms(nq)
 	else
 		Efield = 0.
 	endif
-	
 
 	do i = 1, nspec
 		G1D(:,3*(i-1)+2) = Zi(i) * qe_C * ni(:,i) * Efield !source term
@@ -390,11 +389,11 @@ subroutine update_variables(UU)
 	F1D(:,neqi+1) = u(:,nspec+1) * UU(:,neqi+1)  + p(:,nspec+1) * u(:,nspec+1)
 	
 	!limit max temperature by Tmax and avoid negative temperatures
-	do j = 1, nspec+1
-		T(:,j) = min( T(:,j), Tmax  )
-	    T(:,j) = max( T(:,j), 0.  ) !avoid negative temperature
-	enddo
-	
+!	do j = 1, nspec+1
+!		T(:,j) = min( T(:,j), Tmax  )
+!	    T(:,j) = max( T(:,j), 0.  ) !avoid negative temperature
+!	enddo
+
 end subroutine update_variables
 
 !-----------------------------------------------------------------------
@@ -407,7 +406,7 @@ subroutine 	calculate_collisions(drx,erf_table)
 	implicit none	
 	real*8, intent(in) :: drx
 	real*8, intent(in), dimension(100001) :: erf_table
-		
+
 	!--- calculate collision coefficients ---
 	!----------------------------------------							
 	call collision_coefficients( erf_table, drx )
@@ -450,13 +449,12 @@ subroutine collision_coefficients(erf_table, drx)
 		ni_cc(:,i) = 1.e-3 * rho(:,i) / mi_g(i)  	!cm-3
 	enddo
 	ne_cc = 1.e-3 * rho(:,nspec+1) / me_g		!cm-3
-			
+
 	do i = 1, nspec + 1
 	    T_eV(:,i) = max(  T(:,i) / qe_C, 0.  ) !avoid negative temperature
 	enddo
 	Te_eV = T_eV(:,nspec+1)
-		
-	
+
 	do i = 1, nspec
 		do j = 1, nspec
 		    du = abs(  u(:,i) - u(:,j)  )
@@ -565,6 +563,78 @@ subroutine collision_coefficients(erf_table, drx)
 		k_DT(:,i,nspec+1) = 1.e6 * 3./2 * ni_cc(:,i) * nu_DT(:,i,nspec+1)   !SI units
 		k_DT(:,nspec+1,i) = 1.e6 * 3./2 * ne_cc * nu_DT(:,nspec+1,i)   !SI units
 	enddo
+
+
+    open(unit=31, file = 'ne_cc.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E34.22E3)') ne_cc(i)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'ni_cc.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E34.22E3, A2, E34.22E3)') ni_cc(i,1), ",", ni_cc(i,2)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'Te_eV.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E34.22E3)') Te_eV(i)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'T_eV.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E34.22E3, A2, E34.22E3, A2, E34.22E3)') T_eV(i,1), ",", T_eV(i,2), ",", T_eV(i,3)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'L_ab.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(3(E34.22E3,A2) E34.22E3) ') L_ab(i,1,1), ",", L_ab(i,1,2), ",", L_ab(i,2,1), ",", L_ab(i,2,2)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'L_ie.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E34.22E3, A2, E34.22E3)') L_ie(i,1), ",", L_ie(i,2)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'xiab.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(3(E34.22E3,A2) E34.22E3) ') xiab(i,1,1), ",", xiab(i,1,2), ",", xiab(i,2,1), ",", xiab(i,2,2)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'taue.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E34.22E3)') taue(i)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'ke.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(E34.22E3)') ke(i)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'nu_DT.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(8(E34.22E3,A2) E34.22E3) ') nu_DT(i,1,1), ",", nu_DT(i,1,2), ",", nu_DT(i,1,3), ",",  &
+                nu_DT(i,2,1), ",", nu_DT(i,2,2), ",", nu_DT(i,2,3), ",", &
+                nu_DT(i,3,1), ",", nu_DT(i,3,2), ",", nu_DT(i,3,3)
+    enddo
+    close(31)
+
+    open(unit=31, file = 'k_DT.csv', action = 'write')
+    do i = 1, nz
+        write(31,'(8(E34.22E3,A2) E34.22E3) ') k_DT(i,1,1), ",", k_DT(i,1,2), ",", k_DT(i,1,3), ",",  &
+                k_DT(i,2,1), ",", k_DT(i,2,2), ",", k_DT(i,2,3), ",", &
+                k_DT(i,3,1), ",", k_DT(i,3,2), ",", k_DT(i,3,3)
+    enddo
+    close(31)
+
 
 end subroutine collision_coefficients
 

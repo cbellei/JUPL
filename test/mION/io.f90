@@ -299,7 +299,7 @@ subroutine write_data()
 		enddo				
 	enddo
 
-	1005 format(E14.6E3)
+	1005 format(E34.22E3)
 
 end subroutine write_data
 
@@ -313,11 +313,11 @@ subroutine open_files()
 	character(len=8) :: fmt ! format descriptor
 
 	fmt = '(I1)' ! an integer of width 5 with zeros at the left
-	
+
 	c1 = 0
 	c2 = 0
 	c3 = 0
-		
+
 	do i = 1, (nspec+1)*3+2
 		if (i==1) then
 			filename = 'r.csv'
@@ -330,30 +330,31 @@ subroutine open_files()
 		else if (i>(nspec+1)+1 .and. i<=2*(nspec+1)+1) then
 			c2 = c2 +1
 			write (x1,fmt) c2
-			filename = trim('den'//trim(x1)//'.csv') 
+			filename = trim('den'//trim(x1)//'.csv')
 		else if (i>2*(nspec+1)+1 .and. i<=3*(nspec+1)+1) then
 			c3 = c3 +1
 			write (x1,fmt) c3
-			filename = trim('temp'//trim(x1)//'.csv')			
+			filename = trim('temp'//trim(x1)//'.csv')
 		endif
 		open(unit = unt+i, file = filename, status = 'replace', iostat=ierr)
 		if(ierr/=0) then
 			write(*,*) 'problems in opening the file', filename
 			stop
-		endif		
+		endif
 	enddo
-	
+
 end subroutine open_files
 
 subroutine close_files()
 	use constants
-	
+
 	implicit none
 	integer :: i
-	
-	do i = 1, nspec*3+2
-		close(i)
+
+	do i = 1, (nspec+1)*3+2
+		close(unt + i)
 	enddo
+
 end subroutine close_files
 
 !--------------------------------------------
@@ -369,7 +370,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'U1D.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.8E3,A2) E15.8E3)') &
+		write(31,'(6(E34.22E3,A2) E34.22E3)') &
                 U1Dv(i,1), ",", U1Dv(i,2), ",", U1Dv(i,3), ",", U1Dv(i,4), ",", U1Dv(i,5), &
                 ",", U1Dv(i,6), ",", U1Dv(i,7)
 	enddo
@@ -377,7 +378,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'U1D_p.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.8E3,A2) E15.8E3)') &
+		write(31,'(6(E34.22E3,A2) E34.22E3)') &
 				U1D_pv(i,1), ",", U1D_pv(i,2), ",", U1D_pv(i,3), ",", U1D_pv(i,4), ",", U1D_pv(i,5), &
 				",", U1D_pv(i,6), ",", U1D_pv(i,7)
 	enddo
@@ -385,7 +386,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'U1D_c.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.8E3,A2) E15.8E3)') &
+		write(31,'(6(E34.22E3,A2) E34.22E3)') &
 				U1D_cv(i,1), ",", U1D_cv(i,2), ",", U1D_cv(i,3), ",", U1D_cv(i,4), ",", U1D_cv(i,5), &
 				",", U1D_cv(i,6), ",", U1D_cv(i,7)
 	enddo
@@ -393,7 +394,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'F1D.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.8E3,A2) E15.8E3)') &
+		write(31,'(6(E34.22E3,A2) E34.22E3)') &
 				F1Dv(i,1), ",", F1Dv(i,2), ",", F1Dv(i,3), ",", F1Dv(i,4), ",", F1Dv(i,5), &
 				",", F1Dv(i,6), ",", F1Dv(i,7)
 	enddo
@@ -401,7 +402,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'G1D.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.8E3,A2) E15.8E3)') &
+		write(31,'(6(E34.22E3,A2) E34.22E3)') &
 				G1Dv(i,1), ",", G1Dv(i,2), ",", G1Dv(i,3), ",", G1Dv(i,4), ",", G1Dv(i,5), &
 				",", G1Dv(i,6), ",", G1Dv(i,7)
 	enddo
@@ -409,7 +410,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'C1D.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(6(E15.8E3,A2))') &
+		write(31,'(6(E34.22E3,A2))') &
 				C1Dv(i,1), ",", C1Dv(i,2), ",", C1Dv(i,3), ",", C1Dv(i,4), ",", C1Dv(i,5), &
 				",", C1Dv(i,6)
 	enddo
@@ -417,7 +418,7 @@ subroutine write_all_data(U1Dv, U1D_pv, U1D_cv, F1Dv, G1Dv, C1Dv)
 
 	open(unit=31, file = 'T.csv', action = 'write')
 	do i = 1, nz
-		write(31,'(2(E15.8E3,A2) E15.8E3)') &
+		write(31,'(2(E34.22E3,A2) E34.22E3)') &
 				T(i,1), ",", T(i,2), ",", T(i,3)
 	enddo
 	close(31)

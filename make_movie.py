@@ -162,7 +162,7 @@ def movie(nspec=4,maxn=10,dframe=1):
 	os.system("ffmpeg -y -i './output/foo%03d.jpg' output.m4v")
 	#os.system("ffmpeg -y -i 'friction%03d.jpg' friction.m4v")
 	#os.system("avconv -i 'foo%03d.jpg' -r 10 movie.avi")
-	os.system("rm -f *.jpg")
+	os.system("rm -f ./output/foo*.jpg")
 
 	print "done"
 

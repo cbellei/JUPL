@@ -54,8 +54,7 @@ program shock
 	endif
 
 	call do_smoothing()
-
-	call define_fluxes()
+    call define_fluxes()
 
 	!initialize predictor and corrector
 	U1D_p = U1D
@@ -87,10 +86,11 @@ program shock
 	endif
 	close(unt)
 
-	call open_files()
-	call write_data()
+!	call open_files()
+!	call write_data()
 
 	write(*,*) "C'est parti!"
+
 	do j = 1, maxind
 
 		if (tm>maxTime) then
@@ -101,7 +101,6 @@ program shock
 			ifprint = .true.
 			write(*,*) "--writing files,   t = ", tm
 		endif
-
 
 		if ( mod(100*j, maxind)==0 ) then
 			write(*,'(I3,A26)') int( float(j*100) / maxind ), "  % of the simulation done"
@@ -138,12 +137,21 @@ program shock
 			enddo
 		enddo
 
-		call apply_BC()
-
-		!----- predictor -----------
-		!---------------------------
+        call apply_BC()
+        !----- predictor -----------
+        !---------------------------
 		call predictor(nq,j)
-		call update_variables(U1D_p)
+        if (j==2) then
+            !start debug
+            call open_files()
+            call write_data()
+            call close_files()
+            call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
+            call calculate_collisions(dxx, erf_table)
+            stop
+            !end debug
+        end if
+        call update_variables(U1D_p)
 		call calculate_collisions(dxx, erf_table)
 		call source_terms(nq)
 
@@ -155,44 +163,15 @@ program shock
 		U1D(2:nq-1,1:neqi+1) = 0.5 * ( U1D(2:nq-1,1:neqi+1) + U1D_c(2:nq-1,1:neqi+1) ) 	&
 				+ eps_visc(1:nq-2,1:neqi+1) * ( U1D(3:nq,1:neqi+1) - 2*U1D(2:nq-1,1:neqi+1) + U1D(1:nq-2,1:neqi+1)  )
 
+
 		call update_variables(U1D)
         call calculate_collisions( dxx,erf_table)
         call source_terms(nq)
-!        !--------------------------------
-!        call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
-!        stop
-!        !--------------------------------
 
-
-		if (ion_viscosity) then !second step in splitting operator algorithm
-
-			call calculate_viscous_term(nq,j)
-
-			call update_variables(U1D)
-			call calculate_collisions(dxx,erf_table)
-			call source_terms(nq)
-
-			call apply_BC()
-			call predictor(nq,j)
-			call update_variables(U1D_p)
-			call calculate_collisions( dxx, erf_table )
-			call source_terms(nq)
-
-			call corrector(nq,j)
-
-			U1D(2:nq-1,1:neqi+1) = 0.5 * ( U1D(2:nq-1,1:neqi+1) + U1D_c(2:nq-1,1:neqi+1) ) 	&
-					+ eps_visc(1:nq-2,1:neqi+1) * ( U1D(3:nq,1:neqi+1) - 2*U1D(2:nq-1,1:neqi+1) + U1D(1:nq-2,1:neqi+1)  )
-
-			call update_variables(U1D)
-			call calculate_collisions( dxx,erf_table)
-			call source_terms(nq)
-
-		endif
-
-		if (ifprint) then
-			call write_data()
-			ifprint = .false.
-		endif
+!		if (ifprint) then
+!			call write_data()
+!			ifprint = .false.
+!		endif
 
 	enddo
 

@@ -7,12 +7,13 @@ function predictor!(hydro, nq, jj)
 
 	#take care of ions
 	for i = 1:neqi
-		hydro.U1D_p[2:nq-1,i] = hydro.U1D[2:nq-1,i] - lm_ * (hydro.F1D[3:nq,i] - hydro.F1D[2:nq-1,i])
-				+ dtm_ * (phi * hydro.G1D[3:nq,i] + (1-phi) * hydro.G1D[2:nq-1,i])
+		hydro.U1D_p[2:nq-1,i] = hydro.U1D[2:nq-1,i] -
+                lm_ * (hydro.F1D[3:nq,i] - hydro.F1D[2:nq-1,i]) +
+				dtm_ * (phi * hydro.G1D[3:nq,i] + (1-phi) * hydro.G1D[2:nq-1,i])
 		if (geom=="spherical") #add correction for spherical geometry
-			hydro.U1D_p[2:nq-1,i] = hydro.U1D_p[2:nq-1,i] - 2. * dtm_ / r[2:nq-1]
-						*(phi * ( hydro.F1D[3:nq,i] - hydro.C1D[3:nq,i] ) &
-							+ (1-phi) * ( hydro.F1D[2:nq-1,i] - hydro.C1D[2:nq-1,i]))
+			hydro.U1D_p[2:nq-1,i] = hydro.U1D_p[2:nq-1,i] - 2. * dtm_ / r[2:nq-1] .*
+						(phi * (hydro.F1D[3:nq,i] - hydro.C1D[3:nq,i]) +
+							(1-phi) * (hydro.F1D[2:nq-1,i] - hydro.C1D[2:nq-1,i]))
 		end
 	end
 
@@ -22,7 +23,7 @@ function predictor!(hydro, nq, jj)
                 lm_ * (hydro.F1D[3:nq,neqi+1] - hydro.F1D[2:nq-1,neqi+1]) +
 				dtm_ * (phi * hydro.G1D[3:nq,neqi+1] + (1-phi) * hydro.G1D[2:nq-1,neqi+1])
 		if geom=="spherical" #add correction for spherical geometry
-			hydro.U1D_p[2:nq-1,neqi+1] = hydro.U1D_p[2:nq-1,neqi+1] - 2. * dtm_ / r[2:nq-1] *
+			hydro.U1D_p[2:nq-1,neqi+1] = hydro.U1D_p[2:nq-1,neqi+1] - 2. * dtm_ / r[2:nq-1] .*
 						(phi * hydro.F1D[3:nq,neqi+1] + (1-phi) * hydro.F1D[2:nq-1,neqi+1])
 		end
 	else
@@ -30,7 +31,7 @@ function predictor!(hydro, nq, jj)
                 lm_ * (hydro.F1D[2:nq-1,neqi+1] - hydro.F1D[1:nq-2,neqi+1]) +
 				dtm_ * ((1-phi) * hydro.G1D[2:nq-1,neqi+1] + phi * hydro.G1D[1:nq-2,neqi+1])
 		if (geom=="spherical") #add correction for spherical geometry
-			hydro.U1D_p[2:nq-1,neqi+1] = hydro.U1D_p[2:nq-1,neqi+1] - 2. * dtm_ / r[2:nq-1] *
+			hydro.U1D_p[2:nq-1,neqi+1] = hydro.U1D_p[2:nq-1,neqi+1] - 2. * dtm_ / r[2:nq-1] .*
 						((1-phi) * hydro.F1D[2:nq-1,neqi+1] + phi * hydro.F1D[1:nq-2,neqi+1])
 		end
 	end
@@ -49,7 +50,7 @@ function corrector!(hydro, nq, jj)
                 lm_ * (hydro.F1D[2:nq-1,i] - hydro.F1D[1:nq-2,i]) +
 				dtm_ * ((1-phi) * hydro.G1D[2:nq-1,i] + phi * hydro.G1D[1:nq-2,i])
 		if geom=="spherical"
-			hydro.U1D_c[2:nq-1,i] = hydro.U1D_c[2:nq-1,i] - 2. * dtm_ ./ r[2:nq-1]  .*
+			hydro.U1D_c[2:nq-1,i] = hydro.U1D_c[2:nq-1,i] - 2. * dtm_ ./ r[2:nq-1] .*
 						((1-phi) * (hydro.F1D[2:nq-1,i] - hydro.C1D[2:nq-1,i]) +
 						phi * (hydro.F1D[1:nq-2,i] - hydro.C1D[1:nq-2,i]))
 		end

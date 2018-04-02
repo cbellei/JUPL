@@ -66,7 +66,7 @@ function write_data(hydro)
 		end
         f = @eval $(Symbol("f_$i"))
 		for k = 1:nz
-			writedlm(f, [@sprintf("%.5e", var[k])])
+			writedlm(f, [@sprintf("%.24e", var[k])])
 		end
 	end
 end
