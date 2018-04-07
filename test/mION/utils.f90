@@ -315,8 +315,6 @@ subroutine source_terms(nq)
 		enddo
 	endif
 
-
-
 	q_diff(2:nq-1) = 1. / dr * ke(2:nq-1) * ( T(3:nq,nspec+1) - T(2:nq-1,nspec+1) ) 
 
 	vth_e = sqrt( T(:,nspec+1) / me  )
@@ -324,8 +322,8 @@ subroutine source_terms(nq)
 	q_diff = sign(  min( flimit * q_FS, abs(q_diff) ), q_diff)
 
 	G1D(:,neqi+1) = Q_DT(:,nspec+1) - qe_C * ne * Efield * u(:,nspec+1)
-	
-	if (electron_heat_conduction) then
+
+    if (electron_heat_conduction) then
 		G1D(2:nq-1,neqi+1) = G1D(2:nq-1,neqi+1) + 1. / dr * ( q_diff(2:nq-1) - q_diff(1:nq-2) )
 		if (geom=="spherical") then !add correction due to spherical geometry
 			G1D(:,neqi+1) = G1D(:,neqi+1) + 2. * q_diff / r(:)		
@@ -337,8 +335,8 @@ subroutine source_terms(nq)
 		G1D(:,neqi+1) = G1D(:,neqi+1) - 3.0e16 * (1.e3*me*ne)**2 	&
 			* (1.e-3*T(:,nspec+1)/qe_C)
 	endif
-	
-		
+
+
 end subroutine source_terms
 
 !-----------------------------------------------------------------------
@@ -563,7 +561,6 @@ subroutine collision_coefficients(erf_table, drx)
 		k_DT(:,i,nspec+1) = 1.e6 * 3./2 * ni_cc(:,i) * nu_DT(:,i,nspec+1)   !SI units
 		k_DT(:,nspec+1,i) = 1.e6 * 3./2 * ne_cc * nu_DT(:,nspec+1,i)   !SI units
 	enddo
-
 
     open(unit=31, file = 'ne_cc.csv', action = 'write')
     do i = 1, nz

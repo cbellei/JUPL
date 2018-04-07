@@ -26,8 +26,8 @@ def compare(switch):
 		for i, (row1, row2) in enumerate(zip(data1, data2)):
 			row1 = np.asarray(row1, dtype=float)
 			row2 = np.asarray(row2, dtype=float)
-			result = [math.isclose(r1, r2, rel_tol=1.e-13) for r1, r2 in zip(row1, row2)]
-			if False in result and i < 900:
+			result = [math.isclose(r1, r2, rel_tol=1.e-15) for r1, r2 in zip(row1, row2)]
+			if False in result:
 				print(suffix, i+1)
 				print(result)
 				print("i = ", i+1)

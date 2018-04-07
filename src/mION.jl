@@ -53,22 +53,23 @@ while tm <= maxTime
     nq, time1, time2 = is_quiet_time!(time1, time2, tm, tm_quiet, geom, nz, nq, dt_print, dtm)
 
     apply_BC!(hydro)
+
     #----- predictor -----------
     #---------------------------
     predictor!(hydro, nq, j)
-    # if j==2
-    #     #----start debug
-    #     open_files()
-    #     write_data(hydro)
-    #     close_files()
-    #     write_all_data(hydro)
-    #     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
-    #     systemerror(0)
-    #     #----end debug
-    # end
     update_variables!(hydro.U1D_p, hydro)
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
     source_terms!(hydro, k_DT, ke, Qextra, nq)
+      # #----start debug
+      # if j==1
+      #     open_files()
+      #     write_data(hydro)
+      #     close_files()
+      #     write_all_data(hydro)
+      #     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
+      #     systemerror(0)
+      # end
+      # #----end debug
 
     #----- corrector -----------
     #---------------------------
@@ -83,12 +84,12 @@ while tm <= maxTime
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
     source_terms!(hydro, k_DT, ke, Qextra, nq)
 
-    if is_print
-        open_files()
-        write_data(hydro)
-        close_files()
-        is_print = false
-    end
+    # if is_print
+    #     open_files()
+    #     write_data(hydro)
+    #     close_files()
+    #     is_print = false
+    # end
 
 end
 

@@ -21,11 +21,11 @@ function apply_BC!(hydro)
 			elseif geom=="spherical" #spherical geometry
 				#boundary condition for reflection at wall side
 				for i = 1:nspec
-					hydro.U1D[nn,3*(i-1)+1] = hydro.U1D[nn1,3*(i-1)+1] - lm * hydro.F1D[nn1,3*(i-1)+1] 	&
-								- 2. * dtm_ / r[nz] * phi * hydro.F1D[nz-1,3*(i-1)+1]
+					hydro.U1D[nn,3*(i-1)+1] = hydro.U1D[nn1,3*(i-1)+1] - lm * hydro.F1D[nn1,3*(i-1)+1] 	-
+								2. * dtm_ / r[nz] * phi * hydro.F1D[nz-1,3*(i-1)+1]
 					hydro.U1D[nn,3*(i-1)+2] = 0. #momentum
-					hydro.U1D[nn,3*(i-1)+3] = hydro.U1D[nn1,3*(i-1)+3] - lm * hydro.F1D[nn1,3*(i-1)+3]  &
-								- 2. * dtm_ / r[nz] * phi * hydro.F1D[nn1,3*(i-1)+3]
+					hydro.U1D[nn,3*(i-1)+3] = hydro.U1D[nn1,3*(i-1)+3] - lm * hydro.F1D[nn1,3*(i-1)+3]  -
+								2. * dtm_ / r[nz] * phi * hydro.F1D[nn1,3*(i-1)+3]
 				end
 				#now electrons
 				hydro.U1D[nz,neqi+1] =  hydro.U1D[nz-1,neqi+1]

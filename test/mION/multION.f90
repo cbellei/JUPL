@@ -138,22 +138,23 @@ program shock
 		enddo
 
         call apply_BC()
-        !----- predictor -----------
+
+		!----- predictor -----------
         !---------------------------
 		call predictor(nq,j)
-        if (j==2) then
-            !start debug
-            call open_files()
-            call write_data()
-            call close_files()
-            call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
-            call calculate_collisions(dxx, erf_table)
-            stop
-            !end debug
-        end if
         call update_variables(U1D_p)
 		call calculate_collisions(dxx, erf_table)
 		call source_terms(nq)
+!        if (j==1) then
+!            !start debug
+!            call open_files()
+!            call write_data()
+!            call close_files()
+!            call write_all_data(U1D, U1D_p, U1D_c, F1D, G1D, C1D)
+!            call calculate_collisions(dxx, erf_table)
+!            stop
+!            !end debug
+!        end if
 
 		!----- corrector -----------
 		!---------------------------
