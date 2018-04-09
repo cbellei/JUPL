@@ -86,8 +86,8 @@ program shock
 	endif
 	close(unt)
 
-!	call open_files()
-!	call write_data()
+	call open_files()
+	call write_data()
 
 	write(*,*) "C'est parti!"
 
@@ -169,10 +169,10 @@ program shock
         call calculate_collisions( dxx,erf_table)
         call source_terms(nq)
 
-!		if (ifprint) then
-!			call write_data()
-!			ifprint = .false.
-!		endif
+		if (ifprint) then
+			call write_data()
+			ifprint = .false.
+		endif
 
 	enddo
 

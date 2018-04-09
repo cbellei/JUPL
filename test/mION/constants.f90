@@ -53,10 +53,9 @@ module constants
 		boundary = [character(len=12) :: "reflection", "open"]
 		flimit = 0.01 !flux limit
 
-
 		heattransfer_switch = .true. !if .false., no thermal equilibration
 		efield_switch = .true.
-		electron_switch = .true.   ! if .false., electrons are uncoupled to ions (no E-field, no thermalization with electrons)	
+		electron_switch = .true.   ! if .false., electrons are uncoupled to ions (no E-field, no thermalization with electrons)
 		electron_heat_conduction = .true.
 		friction_switch = .true.
 		bremsstrahlung = .true.
@@ -141,7 +140,7 @@ T_shocked = 1.0 * qe_C * T2T1
 		
 		!3He
 		r0(2,:)  = (/ double precision :: 0.0, 1.2e-2, L /)
-		den0(2,:)   = (/ double precision :: 1.e20,1.e25/)
+		den0(2,:)   = (/ double precision :: 1.e20,3.e24/)
 		temp0(2,:)  = (/ double precision :: 100.*qe_C,1.*qe_C/)
 		vel0(2,:)     = (/ double precision :: -0.3e6, -0.3e6 /)
 						

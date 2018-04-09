@@ -35,7 +35,7 @@ species:
     Ai: 3.0
     Zi: 2.0
     r: [0.0, 1.2e-2, L]
-    den: [1.e20, 1.e25]
+    den: [1.e20, 3.e24]
     temp: [100., 1.]
     vel: [-0.3e6, -0.3e6]
     smooth_type: "min"
@@ -46,7 +46,7 @@ physics:
     electron_switch: true
   heat_conduction:
     heattransfer_switch: true #if false, no thermal equilibration
-    flimit: 0.06
+    flimit: 0.01
     electron_heat_conduction: true
   collisions:
     friction_switch: true

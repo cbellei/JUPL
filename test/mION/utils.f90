@@ -562,75 +562,75 @@ subroutine collision_coefficients(erf_table, drx)
 		k_DT(:,nspec+1,i) = 1.e6 * 3./2 * ne_cc * nu_DT(:,nspec+1,i)   !SI units
 	enddo
 
-    open(unit=31, file = 'ne_cc.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(E34.22E3)') ne_cc(i)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'ni_cc.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(E34.22E3, A2, E34.22E3)') ni_cc(i,1), ",", ni_cc(i,2)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'Te_eV.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(E34.22E3)') Te_eV(i)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'T_eV.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(E34.22E3, A2, E34.22E3, A2, E34.22E3)') T_eV(i,1), ",", T_eV(i,2), ",", T_eV(i,3)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'L_ab.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(3(E34.22E3,A2) E34.22E3) ') L_ab(i,1,1), ",", L_ab(i,1,2), ",", L_ab(i,2,1), ",", L_ab(i,2,2)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'L_ie.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(E34.22E3, A2, E34.22E3)') L_ie(i,1), ",", L_ie(i,2)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'xiab.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(3(E34.22E3,A2) E34.22E3) ') xiab(i,1,1), ",", xiab(i,1,2), ",", xiab(i,2,1), ",", xiab(i,2,2)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'taue.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(E34.22E3)') taue(i)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'ke.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(E34.22E3)') ke(i)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'nu_DT.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(8(E34.22E3,A2) E34.22E3) ') nu_DT(i,1,1), ",", nu_DT(i,1,2), ",", nu_DT(i,1,3), ",",  &
-                nu_DT(i,2,1), ",", nu_DT(i,2,2), ",", nu_DT(i,2,3), ",", &
-                nu_DT(i,3,1), ",", nu_DT(i,3,2), ",", nu_DT(i,3,3)
-    enddo
-    close(31)
-
-    open(unit=31, file = 'k_DT.csv', action = 'write')
-    do i = 1, nz
-        write(31,'(8(E34.22E3,A2) E34.22E3) ') k_DT(i,1,1), ",", k_DT(i,1,2), ",", k_DT(i,1,3), ",",  &
-                k_DT(i,2,1), ",", k_DT(i,2,2), ",", k_DT(i,2,3), ",", &
-                k_DT(i,3,1), ",", k_DT(i,3,2), ",", k_DT(i,3,3)
-    enddo
-    close(31)
+!    open(unit=31, file = 'ne_cc.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(E34.22E3)') ne_cc(i)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'ni_cc.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(E34.22E3, A2, E34.22E3)') ni_cc(i,1), ",", ni_cc(i,2)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'Te_eV.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(E34.22E3)') Te_eV(i)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'T_eV.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(E34.22E3, A2, E34.22E3, A2, E34.22E3)') T_eV(i,1), ",", T_eV(i,2), ",", T_eV(i,3)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'L_ab.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(3(E34.22E3,A2) E34.22E3) ') L_ab(i,1,1), ",", L_ab(i,1,2), ",", L_ab(i,2,1), ",", L_ab(i,2,2)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'L_ie.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(E34.22E3, A2, E34.22E3)') L_ie(i,1), ",", L_ie(i,2)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'xiab.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(3(E34.22E3,A2) E34.22E3) ') xiab(i,1,1), ",", xiab(i,1,2), ",", xiab(i,2,1), ",", xiab(i,2,2)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'taue.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(E34.22E3)') taue(i)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'ke.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(E34.22E3)') ke(i)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'nu_DT.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(8(E34.22E3,A2) E34.22E3) ') nu_DT(i,1,1), ",", nu_DT(i,1,2), ",", nu_DT(i,1,3), ",",  &
+!                nu_DT(i,2,1), ",", nu_DT(i,2,2), ",", nu_DT(i,2,3), ",", &
+!                nu_DT(i,3,1), ",", nu_DT(i,3,2), ",", nu_DT(i,3,3)
+!    enddo
+!    close(31)
+!
+!    open(unit=31, file = 'k_DT.csv', action = 'write')
+!    do i = 1, nz
+!        write(31,'(8(E34.22E3,A2) E34.22E3) ') k_DT(i,1,1), ",", k_DT(i,1,2), ",", k_DT(i,1,3), ",",  &
+!                k_DT(i,2,1), ",", k_DT(i,2,2), ",", k_DT(i,2,3), ",", &
+!                k_DT(i,3,1), ",", k_DT(i,3,2), ",", k_DT(i,3,3)
+!    enddo
+!    close(31)
 
 
 end subroutine collision_coefficients

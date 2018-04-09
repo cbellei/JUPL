@@ -10,6 +10,7 @@ function calculate_collisions!(hydro, erf_table)
 	#----------------------------------------
 	hydro, xiab, k_DT, ke = collision_coefficients(hydro, erf_table, drx)
 
+	Qextra = zeros(Float64, nz)
 	if friction_switch
 		hydro, Qextra = friction(hydro, xiab)
 	end
@@ -283,21 +284,21 @@ end
 #-----------------------------------------------------------------------
 function friction(hydro, xiab)
 
-	R1D = zeros(Float64, nz, neqi+1)
+	hydro.R1D = zeros(Float64, nz, neqi+1)
 	Qextra = zeros(Float64, nz)
 
 	for i = 1:nspec
 		for j = 1:nspec
 			if i != j
-				R1D[:,3*(i-1)+2] = R1D[:,3*(i-1)+2] -
+				hydro.R1D[:,3*(i-1)+2] = hydro.R1D[:,3*(i-1)+2] -
                         xiab[:,i,j] .* (hydro.u[:,i] - hydro.u[:,j])
     		end
     	end
-    	R1D[:,3*(i-1)+3] = hydro.u[:,i] .* R1D[:,3*(i-1)+2]
+    	hydro.R1D[:,3*(i-1)+3] = hydro.u[:,i] .* hydro.R1D[:,3*(i-1)+2]
     end
 
  	for i = 1:nspec
-		Qextra = Qextra - R1D[:,3*(i-1)+3]
+		Qextra = Qextra - hydro.R1D[:,3*(i-1)+3]
 	end
 
 	return hydro, Qextra

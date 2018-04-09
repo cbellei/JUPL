@@ -84,12 +84,12 @@ while tm <= maxTime
     hydro, k_DT, ke, Qextra = calculate_collisions!(hydro, erf_table)
     source_terms!(hydro, k_DT, ke, Qextra, nq)
 
-    # if is_print
-    #     open_files()
-    #     write_data(hydro)
-    #     close_files()
-    #     is_print = false
-    # end
+    if is_print
+        open_files()
+        write_data(hydro)
+        close_files()
+        is_print = false
+    end
 
 end
 
