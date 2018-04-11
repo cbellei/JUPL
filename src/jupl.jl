@@ -1,8 +1,12 @@
-push!(LOAD_PATH, "./init")
-push!(LOAD_PATH, "./src")
+module mION
+
+JUPL_PATH = ARGS[1] #get path from command line
+
+push!(LOAD_PATH, "$JUPL_PATH/init")
+push!(LOAD_PATH, "$JUPL_PATH/src")
 using Glob
 
-include("io.jl")
+include("$JUPL_PATH/src/io.jl")
 output_files = glob("output/*.csv")
 for file in output_files
     rm(file)
@@ -15,14 +19,14 @@ end
 using Constants
 using Get_Sim_Params
 
-include("../init/process_params.jl")
+include("$JUPL_PATH/init/process_params.jl")
 const dr, mi_g, mi, qi, nquiet, cs, CFL, dtm,
         lm, nsmooth, vsmooth, tsmooth = process_params()
 
-include("types.jl")
+include("$JUPL_PATH/src/types.jl")
 hydro = hydro_vars(nz, nspec, neqi)
 
-include("../init/init_sim.jl")
+include("$JUPL_PATH/init/init_sim.jl")
 const r = init_spacegrid(dr)
 const eps_visc = init_art_viscosity(geom)
 if !restart
@@ -32,16 +36,16 @@ hydro = do_smoothing(hydro)
 hydro = init_fluxes(hydro)
 init_predictor_corrector(hydro)
 
-erf_table = get_erf_integral()
+erf_table = get_erf_integral(JUPL_PATH)
 write_sim_parameters()
 open_files()
 write_data(hydro)
 close_files()
 
-include("utils.jl")
-include("boundary.jl")
-include("numerics.jl")
-include("collisions.jl")
+include("$JUPL_PATH/src/utils.jl")
+include("$JUPL_PATH/src/boundary.jl")
+include("$JUPL_PATH/src/numerics.jl")
+include("$JUPL_PATH/src/collisions.jl")
 
 nq = 0
 j = 0
@@ -96,3 +100,5 @@ end
 println("---Simulation ended---")
 
 close_files()
+
+end

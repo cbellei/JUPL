@@ -2,7 +2,7 @@ module Get_Sim_Params
     using Constants
     import YAML
 
-    path = "./runs/run01/run01.yml"
+    path = ARGS[2] #"./runs/run01/run01.yml"
     data = YAML.load(open(path))
 
     export geom, nz, nregions, L, smoothing

@@ -1,5 +1,5 @@
-function get_erf_integral()
-    data = readdlm("assets/erf_integral.dat")
+function get_erf_integral(JUPL_PATH)
+    data = readdlm("$JUPL_PATH/assets/erf_integral.dat")
     erf_table = data[:,2]
 end
 
