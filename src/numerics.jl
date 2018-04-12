@@ -118,11 +118,11 @@ function update_variables!(UU, hydro)
 	hydro.p[:,nspec+1] = hydro.rho[:,nspec+1] .* hydro.T[:,nspec+1] / me
 	hydro.F1D[:,neqi+1] = hydro.u[:,nspec+1] .* UU[:,neqi+1]  + hydro.p[:,nspec+1] .* hydro.u[:,nspec+1]
 
-	# limit max temperature by Tmax and avoid negative temperatures
-	# for j = 1:nspec+1
-	# 	T[:,j] = min( T[:,j], Tmax  )
-	#     T[:,j] = max( T[:,j], 0.  ) # avoid negative temperature
-	# end
+# 	limit max temperature by Tmax and avoid negative temperatures
+	for j = 1:nspec+1
+# 		hydro.T[:,j] = min.(hydro.T[:,j], Tmax)
+	    hydro.T[:,j] = max.(hydro.T[:,j], 1.e-5*qe_C) # avoid negative temperature
+	end
 
     return hydro
 end

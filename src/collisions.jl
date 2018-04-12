@@ -59,7 +59,7 @@ function collision_coefficients(hydro, erf_table, drx)
 	ne_cc = 1.e-3 * hydro.rho[:,nspec+1] / me_g #cm-3
 
 	for i = 1:nspec+1
-	    T_eV[:,i] = max.(hydro.T[:,i] / qe_C, 0.) #avoid negative temperature
+	    T_eV[:,i] = hydro.T[:,i] / qe_C #hydro.T[:,i] should always be > 0 as per enforced condition in numerics.jl
 	end
 	Te_eV = T_eV[:,nspec+1]
 
@@ -83,7 +83,7 @@ function collision_coefficients(hydro, erf_table, drx)
 	for i = 1:nspec #logLambda for ion-electrons
 		L_ie[:,i] = max.(
             Lab_min,
-            log.(3/2 * (Te_eV*1.6e-19*1.e7).^1.5 ./ sqrt.(pi * ne_cc) / (Zi[i]*qe^3)) #Krall&Trivelpiece
+            log.(3/2 * (Te_eV*qe_C*1.e7).^1.5 ./ sqrt.(pi * ne_cc) / (Zi[i]*qe^3)) #Krall&Trivelpiece
         )
 	end
 
@@ -91,7 +91,8 @@ function collision_coefficients(hydro, erf_table, drx)
 		for j = 1:nspec
 		    du = abs.(hydro.u[:,i] - hydro.u[:,j])
 			Tab = ( mi_g[i] * hydro.T[:,j] + mi_g[j] * hydro.T[:,i] ) / ( mi_g[i] + mi_g[j] )
-			Mab = sqrt.( 0.5 * muab[i,j] ./ Tab  ) .* (du + ε)
+            Tab = max.(Tab, ε) #avoid negative values (coming from negative temperature)
+			Mab = sqrt.( 0.5 * muab[i,j] ./ Tab ) .* (du + ε)
 			i_erf = min.(max.(1, floor.(Int, Mab / drx) + 1), 100000)
 			for k = 1:nz
 				erf[k] = erf_table[i_erf[k]] +
@@ -177,104 +178,6 @@ function collision_coefficients(hydro, erf_table, drx)
 		k_DT[:,i,nspec+1] = 1.e6 * 3./2 * ni_cc[:,i] .* nu_DT[:,i,nspec+1]   #SI units
 		k_DT[:,nspec+1,i] = 1.e6 * 3./2 * ne_cc .* nu_DT[:,nspec+1,i]   #SI units
 	end
-
-	# filename = "./output/ni_cc.csv"
-	# var = ni_cc
-	# writedlm(filename, var, ",")
-    #
-	# filename = "./output/ne_cc.csv"
-	# var = ne_cc
-	# writedlm(filename, var, ",")
-    #
-	# filename = "./output/Te_eV.csv"
-	# var = Te_eV
-	# writedlm(filename, var, ",")
-    #
-	# filename = "./output/T_eV.csv"
-	# var = T_eV
-	# writedlm(filename, var, ",")
-    #
-	# filename = "./output/L_ab.csv"
-	# var = L_ab
-	# f = open(filename, "w")
-	# for i=1:nz
-	# 	l1 = var[i,1,1]
-	# 	l2 = var[i,1,2]
-	# 	l3 = var[i,2,1]
-	# 	l4 = var[i,2,2]
-	# 	writedlm(f, [@sprintf("%.24e %s %.24e %s %.24e %s %.24e", l1, ",", l2, ",", l3, ",", l4)])
-	# end
-	# close(f)
-    #
-	# filename = "./output/L_ie.csv"
-	# var = L_ie
-	# f = open(filename, "w")
-	# for i=1:nz
-	# 	l1 = var[i,1]
-	# 	l2 = var[i,2]
-	# 	writedlm(f, [@sprintf("%.24e %s %.24e", l1, ",", l2)])
-	# end
-	# close(f)
-    #
-	# filename = "./output/xiab.csv"
-	# var = xiab
-	# f = open(filename, "w")
-	# for i=1:nz
-	# 	l1 = xiab[i,1,1]
-	# 	l2 = xiab[i,1,2]
-	# 	l3 = xiab[i,2,1]
-	# 	l4 = xiab[i,2,2]
-	# 	writedlm(f, [@sprintf("%.24e %s %.24e %s %.24e %s %.24e", l1, ",", l2, ",", l3, ",", l4)])
-	# end
-	# close(f)
-    #
-	# filename = "./output/taue.csv"
-	# var = taue
-	# f = open(filename, "w")
-	# writedlm(filename, var, ",")
-	# close(f)
-    #
-	# filename = "./output/ke.csv"
-	# var = ke
-	# f = open(filename, "w")
-	# writedlm(filename, var, ",")
-	# close(f)
-    #
-	# filename = "./output/nu_DT.csv"
-	# var = nu_DT
-	# f = open(filename, "w")
-	# for i=1:nz
-	# 	l1 = var[i,1,1]
-	# 	l2 = var[i,1,2]
-	# 	l3 = var[i,1,3]
-	# 	l4 = var[i,2,1]
-	# 	l5 = var[i,2,2]
-	# 	l6 = var[i,2,3]
-	# 	l7 = var[i,3,1]
-	# 	l8 = var[i,3,2]
-	# 	l9 = var[i,3,3]
-	# 	writedlm(f, [@sprintf("%.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e",
-	# 					l1, ",", l2, ",", l3, ",", l4, ",", l5, ",", l6, ",", l7, ",", l8, ",", l9)])
-	# end
-	# close(f)
-    #
-	# filename = "./output/k_DT.csv"
-	# var = k_DT
-	# f = open(filename, "w")
-	# for i=1:nz
-	# 	l1 = var[i,1,1]
-	# 	l2 = var[i,1,2]
-	# 	l3 = var[i,1,3]
-	# 	l4 = var[i,2,1]
-	# 	l5 = var[i,2,2]
-	# 	l6 = var[i,2,3]
-	# 	l7 = var[i,3,1]
-	# 	l8 = var[i,3,2]
-	# 	l9 = var[i,3,3]
-	# 	writedlm(f, [@sprintf("%.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e %s %.24e",
-	# 					l1, ",", l2, ",", l3, ",", l4, ",", l5, ",", l6, ",", l7, ",", l8, ",", l9)])
-	# end
-	# close(f)
 
 	return hydro, xiab, k_DT, ke
 end
